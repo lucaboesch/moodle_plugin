@@ -1059,25 +1059,24 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
      * This default method prints the teacher picture and name, date when marked,
      * grade and teacher submissioncomment.
      *
-     * @global object
-     * @global object
-     * @global object
-     * @param object $submission The submission object or NULL in which case it will be loaded
-     *
-     * TODO: correct documentation for this function
+     * @param object $kalvidassign - Kaltura instance video assignment object
+     * @param object $context A context object.
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws moodle_exception
      */
     public function display_grade_feedback($kalvidassign, $context) {
         global $USER, $CFG, $DB;
 
         require_once($CFG->libdir.'/gradelib.php');
 
-        // Check if the user is enrolled to the coruse and can submit to the assignment
+        // Check if the user is enrolled to the course and can submit to the assignment.
         if (!is_enrolled($context, $USER, 'mod/kalvidassign:submit')) {
-            // can not submit assignments -> no feedback
+            // Can not submit assignments -> no feedback.
             return;
         }
 
-        // Get the user's submission obj
+        // Get the user's submission obj.
         $gradinginfo = grade_get_grades($kalvidassign->course, 'mod', 'kalvidassign', $kalvidassign->id, $USER->id);
 
         $item = $gradinginfo->items[0];
@@ -1096,12 +1095,12 @@ class mod_kalvidassign_renderer extends plugin_renderer_base {
         $gradedate = $grade->dategraded;
         $gradeby   = $grade->usermodified;
 
-        // We need the teacher info
+        // We need the teacher info.
         if (!$teacher = $DB->get_record('user', array('id'=>$gradeby))) {
             print_error('cannotfindteacher');
         }
 
-        // Print the feedback
+        // Print the feedback.
         echo $this->output->heading(get_string('feedbackfromteacher', 'kalvidassign', fullname($teacher)));
 
         echo '<table cellspacing="0" class="feedback">';
