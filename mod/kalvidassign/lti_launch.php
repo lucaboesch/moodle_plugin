@@ -72,7 +72,7 @@ if (false === local_kaltura_url_contains_configured_hostname($source) && !empty(
 }
 
 $isResubmit = !empty($submission->entry_id) || !empty($submission->timecreated);
-$isExpired = kalvidassign_assignemnt_submission_expired($kalvidassignobj);
+$isExpired = kalvidassign_assignment_submission_expired($kalvidassignobj);
 $isReplaceMediaDisabled = $isExpired || !$kalvidassignobj->resubmit;
 
 if ($isResubmit && $isReplaceMediaDisabled && empty($source)) {

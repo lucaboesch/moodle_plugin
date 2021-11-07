@@ -41,10 +41,10 @@ require_once(dirname(dirname(dirname(__FILE__))).'/local/kaltura/locallib.php');
  * Check if the assignment submission end date has passed or if late submissions
  * are prohibited
  *
- * @param object - Kaltura instance video assignment object
+ * @param object $kalvidassign - Kaltura instance video assignment object
  * @return bool - true if expired, otherwise false
  */
-function kalvidassign_assignemnt_submission_expired($kalvidassign) {
+function kalvidassign_assignment_submission_expired($kalvidassign) {
     $expired = false;
 
     if ($kalvidassign->preventlate) {
@@ -56,7 +56,7 @@ function kalvidassign_assignemnt_submission_expired($kalvidassign) {
 
 /**
  * Retrieve a list of users who have submitted assignments
- * 
+ *
  * @param int $kalvidassignid The assignment id.
  * @param string $filter Filter results by assignments that have been submitted or
  * assignment that need to be graded or no filter at all.

@@ -86,7 +86,7 @@ $submission = $DB->get_record('kalvidassign_submission', $param);
 
 echo $renderer->display_video_container_markup($submission, $course->id, $cm->id);
 
-if (kalvidassign_assignemnt_submission_expired($kalvidassign)) {
+if (kalvidassign_assignment_submission_expired($kalvidassign)) {
     $disabled = true;
 }
 

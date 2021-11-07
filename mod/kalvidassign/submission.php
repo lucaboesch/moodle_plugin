@@ -58,7 +58,7 @@ $PAGE->set_title(format_string($kalvidassignobj->name));
 $PAGE->set_heading($course->fullname);
 
 
-if (kalvidassign_assignemnt_submission_expired($kalvidassignobj)) {
+if (kalvidassign_assignment_submission_expired($kalvidassignobj)) {
     print_error('assignmentexpired', 'kalvidassign', 'course/view.php?id='.$course->id);
 }
 
