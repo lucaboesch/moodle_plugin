@@ -23,6 +23,9 @@
 
 define('LOCAL_KALTURAMEDIAGALLERY_LINK_LOCATION_NAVIGATION_BLOCK', 0);
 define('LOCAL_KALTURAMEDIAGALLERY_LINK_LOCATION_COURSE_SETTINGS', 1);
+
+use local_kalturamediagallery\output\navigation as nav;
+
 /**
  * This function adds Kaltura media gallery link to the navigation block.  The code ensures that the Kaltura media gallery link is only displayed in the 'Current courses'
  * menu true.  In addition it check if the current context is one that is below the course context.
@@ -100,18 +103,17 @@ function local_kalturamediagallery_extend_navigation($navigation) {
     }
 }
 
-function local_kalturamediagallery_extend_navigation_course(navigation_node $parent, stdClass $course, context_course $context) {
-    global $USER;
-
-    if (get_config('local_kalturamediagallery', 'link_location') != LOCAL_KALTURAMEDIAGALLERY_LINK_LOCATION_COURSE_SETTINGS
-        || empty($USER->id)
-        || !has_capability('local/kalturamediagallery:view', $context, $USER)) {
-        return;
+/**
+ * Fumble with Moodle's global navigation by leveraging Moodle's *_extend_navigation_course() hook.
+ *
+ * @param navigation_node $navigation The navigation node to extend
+ * @param stdClass        $course     The course to object for the tool
+ * @param context         $context    The context of the course
+ */
+function local_kalturamediagallery_extend_navigation_course($navigation, $course, $context) {
+    if ($newnode = \local_kalturamediagallery\output\navigation::create_navigation_node($course, $context)) {
+        $navigation->add_node($newnode);
     }
-
-    $name = get_string('nav_mediagallery', 'local_kalturamediagallery');
-    $url = new moodle_url('/local/kalturamediagallery/index.php', array('courseid' => $course->id));
-    $parent->add($name, $url, navigation_node::NODETYPE_LEAF, $name, 'kalturamediagallery-settings', getMediaGalleryIcon());
 }
 
 function isNodeNotEmpty(navigation_node $node) {
