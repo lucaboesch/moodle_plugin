@@ -57,7 +57,7 @@ function kalvidassign_add_instance($kalvidassign) {
         $event->timestart   = $kalvidassign->timedue;
         $event->timeduration = 0;
 
-        calendar_event::create($event, false);
+        calendar_event::create($event);
     }
 
     kalvidassign_grade_item_update($kalvidassign);
@@ -107,7 +107,7 @@ function kalvidassign_update_instance($kalvidassign) {
             $event->timestart   = $kalvidassign->timedue;
             $event->timeduration = 0;
 
-            calendar_event::create($event, false);
+            calendar_event::create($event);
         }
     } else {
         $DB->delete_records('event', array('modulename' => 'kalvidassign', 'instance' => $kalvidassign->id));
@@ -268,6 +268,9 @@ function kalvidassign_supports($feature) {
             break;
         case FEATURE_BACKUP_MOODLE2:
             return true;
+            break;
+        case FEATURE_MOD_PURPOSE:
+            return MOD_PURPOSE_ASSESSMENT;
             break;
         default:
             return null;
