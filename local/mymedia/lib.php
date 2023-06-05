@@ -67,5 +67,7 @@ function local_mymedia_extend_navigation($navigation) {
 
     $menuHeaderStr = get_string('nav_mymedia', 'local_mymedia');
     $myMediaStr = "\n$menuHeaderStr|/local/mymedia/mymedia.php";
-    $CFG->custommenuitems .= $myMediaStr;
+    if (empty($custommenuitems) && (isset($CFG->custommenuitems) && !empty($CFG->custommenuitems))) {
+        $CFG->custommenuitems .= $myMediaStr;
+    }
 }
