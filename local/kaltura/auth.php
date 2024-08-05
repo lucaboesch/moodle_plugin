@@ -19,23 +19,25 @@
  * The re-write serves as the initiation of the LTI 1.3 handshake between the Kaltura Moodle Plugin and the customer's KAF instance.
  *
  * @package    local_kaltura
+ * @copyright  2023 Roi Levi <roi.levi@kaltura.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(__DIR__ . '/../../config.php');
+require_once(__DIR__ . '/../../config.php'); // phpcs:disable moodle.Files.RequireLogin.Missing
 require_once($CFG->dirroot . '/mod/lti/locallib.php');
 require_once($CFG->dirroot . '/local/kaltura/locallib.php');
 global $_POST, $_SERVER;
 
 if (!isloggedin() && empty($_POST['repost'])) {
-	header_remove("Set-Cookie");
-	$PAGE->set_pagelayout('popup');
-	$PAGE->set_context(context_system::instance());
-	$output = $PAGE->get_renderer('mod_lti');
-	$page = new \mod_lti\output\repost_crosssite_page($_SERVER['REQUEST_URI'], $_POST);
-	echo $output->header();
-	echo $output->render($page);
-	echo $output->footer();
-	return;
+    header_remove("Set-Cookie");
+    $PAGE->set_pagelayout('popup');
+    $PAGE->set_context(context_system::instance());
+    $output = $PAGE->get_renderer('mod_lti');
+    $page = new \mod_lti\output\repost_crosssite_page($_SERVER['REQUEST_URI'], $_POST);
+    echo $output->header();
+    echo $output->render($page);
+    echo $output->footer();
+    return;
 }
 
 $scope = optional_param('scope', '', PARAM_TEXT);
@@ -50,85 +52,85 @@ $nonce = optional_param('nonce', '', PARAM_TEXT);
 $prompt = optional_param('prompt', '', PARAM_TEXT);
 
 $ok = !empty($scope) && !empty($responsetype) && !empty($clientid) &&
-	!empty($redirecturi) && !empty($loginhint) &&
-	!empty($nonce);
+    !empty($redirecturi) && !empty($loginhint) &&
+    !empty($nonce);
 
 if (!$ok) {
-	$error = 'invalid_request';
+    $error = 'invalid_request';
 }
 
 $ltimessagehint = json_decode($ltimessagehintenc);
 $ok = $ok && isset($ltimessagehint->launchid);
 if (!$ok) {
-	$error = 'invalid_request';
-	$desc = 'No launch id in LTI hint';
+    $error = 'invalid_request';
+    $desc = 'No launch id in LTI hint';
 }
 if ($ok && ($scope !== 'openid')) {
-	$ok = false;
-	$error = 'invalid_scope';
+    $ok = false;
+    $error = 'invalid_scope';
 }
 if ($ok && ($responsetype !== 'id_token')) {
-	$ok = false;
-	$error = 'unsupported_response_type';
+    $ok = false;
+    $error = 'unsupported_response_type';
 }
 if ($ok) {
-	$launchid = $ltimessagehint->launchid;
-	list($courseid, $typeid, $id, $messagetype, $foruserid, $titleb64, $textb64) = explode(',', $SESSION->$launchid, 7);
-	unset($SESSION->$launchid);
+    $launchid = $ltimessagehint->launchid;
+    list($courseid, $typeid, $id, $messagetype, $foruserid, $titleb64, $textb64) = explode(',', $SESSION->$launchid, 7);
+    unset($SESSION->$launchid);
 
-	$module = array();
-	$module['id'] = 1;
-	$module['cmid'] = 0;
-	$module['module'] = $ltimessagehint->cmid;
-	$module['title'] = $titleb64 ? base64_decode($titleb64) : '';
+    $module = [];
+    $module['id'] = 1;
+    $module['cmid'] = 0;
+    $module['module'] = $ltimessagehint->cmid;
+    $module['title'] = $titleb64 ? base64_decode($titleb64) : '';
 
-	$configsettings = local_kaltura_get_config();
-	$config = local_kaltura_lti_get_type_type_config($module, $configsettings);
-	$ok = ($clientid === $config->lti_clientid);
-	if (!$ok) {
-		$error = 'unauthorized_client';
-	}
+    $configsettings = local_kaltura_get_config();
+    $config = local_kaltura_lti_get_type_type_config($module, $configsettings);
+    $ok = ($clientid === $config->lti_clientid);
+    if (!$ok) {
+        $error = 'unauthorized_client';
+    }
 }
 if ($ok && ($loginhint !== $USER->id)) {
-	$ok = false;
-	$error = 'access_denied';
+    $ok = false;
+    $error = 'access_denied';
 }
 
 // If we're unable to load up config; we cannot trust the redirect uri for POSTing to.
 if (empty($config)) {
-	throw new moodle_exception('invalidrequest', 'error');
+    throw new moodle_exception('invalidrequest', 'error');
 } else {
-	$uris = array_map("trim", explode("\n", $config->lti_redirectionuris));
-	if (!in_array($redirecturi, $uris)) {
-		throw new moodle_exception('invalidrequest', 'error');
-	}
+    $uris = array_map("trim", explode("\n", $config->lti_redirectionuris));
+    if (!in_array($redirecturi, $uris)) {
+        throw new moodle_exception('invalidrequest', 'error');
+    }
 }
 if ($ok) {
-	if (isset($responsemode)) {
-		$ok = ($responsemode === 'form_post');
-		if (!$ok) {
-			$error = 'invalid_request';
-			$desc = 'Invalid response_mode';
-		}
-	} else {
-		$ok = false;
-		$error = 'invalid_request';
-		$desc = 'Missing response_mode';
-	}
+    if (isset($responsemode)) {
+        $ok = ($responsemode === 'form_post');
+        if (!$ok) {
+            $error = 'invalid_request';
+            $desc = 'Invalid response_mode';
+        }
+    } else {
+        $ok = false;
+        $error = 'invalid_request';
+        $desc = 'Missing response_mode';
+    }
 }
 if ($ok && !empty($prompt) && ($prompt !== 'none')) {
-	$ok = false;
-	$error = 'invalid_request';
-	$desc = 'Invalid prompt';
+    $ok = false;
+    $error = 'invalid_request';
+    $desc = 'Invalid prompt';
 }
 
 if ($ok) {
-	$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
-	if ($id && $course) {
+    $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
+    if ($id && $course) {
         $module["course"] = $course;
-		$editor = $SESSION->editor;
-		list($endpoint, $params) = local_kaltura_lti1p3_get_launch_data($module, null, $editor, $nonce);
-	} else {
+        $editor = $SESSION->editor;
+        list($endpoint, $params) = local_kaltura_lti1p3_get_launch_data($module, null, $editor, $nonce);
+    } else {
         $ok = false;
         $error = 'course_not_found';
         $desc = 'Course Not Found';
@@ -136,28 +138,28 @@ if ($ok) {
 }
 
 if (!$ok) {
-	$params['error'] = $error;
-	if (!empty($desc)) {
-		$params['error_description'] = $desc;
-	}
+    $params['error'] = $error;
+    if (!empty($desc)) {
+        $params['error_description'] = $desc;
+    }
 }
 if (isset($state)) {
-	$params['state'] = $state;
+    $params['state'] = $state;
 }
 
 $r = '<form action="' . $redirecturi . "\" name=\"ltiAuthForm\" id=\"ltiAuthForm\" " .
-	"method=\"post\" enctype=\"application/x-www-form-urlencoded\">\n";
+    "method=\"post\" enctype=\"application/x-www-form-urlencoded\">\n";
 if (!empty($params)) {
-	foreach ($params as $key => $value) {
-		$key = htmlspecialchars($key);
-		$value = htmlspecialchars($value);
-		$r .= "  <input type=\"hidden\" name=\"{$key}\" value=\"{$value}\"/>\n";
-	}
+    foreach ($params as $key => $value) {
+        $key = htmlspecialchars($key);
+        $value = htmlspecialchars($value);
+        $r .= "  <input type=\"hidden\" name=\"{$key}\" value=\"{$value}\"/>\n";
+    }
 }
 $r .= "</form>\n";
 $r .= "<script type=\"text/javascript\">\n" .
-	"//<![CDATA[\n" .
-	"document.ltiAuthForm.submit();\n" .
-	"//]]>\n" .
-	"</script>\n";
+    "//<![CDATA[\n" .
+    "document.ltiAuthForm.submit();\n" .
+    "//]]>\n" .
+    "</script>\n";
 echo $r;

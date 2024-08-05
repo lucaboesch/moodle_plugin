@@ -41,7 +41,7 @@ $context = context_course::instance($courseid);
 require_capability('mod/kalvidassign:submit', $context);
 $course = get_course($courseid);
 
-$launch = array();
+$launch = [];
 $launch['id'] = 1;
 $launch['cmid'] = $cmid;
 $launch['title'] = 'Kaltura video assignment';
@@ -54,15 +54,15 @@ $launch['custom_publishdata'] = '';
 $source = $source = local_kaltura_add_kaf_uri_token($source);
 
 if (!$cm = get_coursemodule_from_id('kalvidassign', $cmid)) {
-    print_error('invalidcoursemodule');
+    throw new moodle_exception('invalidcoursemodule');
 }
 
-if (!$kalvidassignobj = $DB->get_record('kalvidassign', array('id' => $cm->instance))) {
-    print_error('invalidid', 'kalvidassign');
+if (!$kalvidassignobj = $DB->get_record('kalvidassign', ['id' => $cm->instance])) {
+    throw new moodle_exception('invalidid', 'kalvidassign');
 }
 
-$submissionParams = array('vidassignid' => $kalvidassignobj->id, 'userid' => $USER->id);
-$submission = $DB->get_record('kalvidassign_submission', $submissionParams);
+$submissionparams = ['vidassignid' => $kalvidassignobj->id, 'userid' => $USER->id];
+$submission = $DB->get_record('kalvidassign_submission', $submissionparams);
 
 if (false === local_kaltura_url_contains_configured_hostname($source) && !empty($source)) {
     echo get_string('invalid_source_parameter', 'mod_kalvidres');
@@ -71,11 +71,11 @@ if (false === local_kaltura_url_contains_configured_hostname($source) && !empty(
     $launch['source'] = urldecode($source);
 }
 
-$isResubmit = !empty($submission->entry_id) || !empty($submission->timecreated);
-$isExpired = kalvidassign_assignemnt_submission_expired($kalvidassignobj);
-$isReplaceMediaDisabled = $isExpired || !$kalvidassignobj->resubmit;
+$isresubmit = !empty($submission->entry_id) || !empty($submission->timecreated);
+$isexpired = kalvidassign_assignemnt_submission_expired($kalvidassignobj);
+$isreplacemediadisabled = $isexpired || !$kalvidassignobj->resubmit;
 
-if ($isResubmit && $isReplaceMediaDisabled && empty($source)) {
+if ($isresubmit && $isreplacemediadisabled && empty($source)) {
     echo get_string('notallowedtoreplacemedia', 'mod_kalvidassign');
     die;
 }

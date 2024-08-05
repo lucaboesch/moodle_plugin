@@ -17,7 +17,7 @@
 /**
  * LTI preview and selection renderer library.
  *
- * @module      tiny_kalturamedia
+ * @package     tiny_kalturamedia
  * @copyright   2023 Roi Levi <roi.levi@kaltura.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,32 +27,35 @@ define('TINY_KALTURAMEDIA_OBJECT_TAG_HEIGHT', '500');
 
 /**
  * Returns HTML markup for a form used to preview and insert the video markup into the page.
- * @param string $contextId
+ *
+ * @param string $contextid
  * @return string HTML markup.
+ * @package tiny_kalturamedia
  */
-function tiny_kalturamedia_preview_embed_form($contextId = '') {
+function tiny_kalturamedia_preview_embed_form($contextid = '') {
     // Create hidden elements.
-    $hiddenelements = html_writer::empty_tag('input', array('type' => 'hidden', 'id' => 'entry_id', 'value' => ''));
-    $hiddenelements .= html_writer::empty_tag('input', array('type' => 'hidden', 'id' => 'source', 'value' => ''));
-    $hiddenelements .= html_writer::empty_tag('input', array('type' => 'hidden', 'id' => 'kafuri', 'value' => local_kaltura_get_config()->kaf_uri));
-    $hiddenelements .= html_writer::empty_tag('input', array('type' => 'hidden', 'id' => 'video_title', 'value' => ''));
-    $hiddenelements .= html_writer::empty_tag('input', array('type' => 'hidden', 'id' => 'uiconf_id', 'value' => ''));
-    $hiddenelements .= html_writer::empty_tag('input', array('type' => 'hidden', 'id' => 'widescreen', 'value' => ''));
-    $hiddenelements .= html_writer::empty_tag('input', array('type' => 'hidden', 'id' => 'height', 'value' => ''));
-    $hiddenelements .= html_writer::empty_tag('input', array('type' => 'hidden', 'id' => 'width', 'value' => ''));
-    $hiddenelements .= html_writer::empty_tag('input', array('type' => 'hidden', 'id' => 'lti_launch_context_id', 'value' => $contextId));
+    $hiddenelements = html_writer::empty_tag('input', ['type' => 'hidden', 'id' => 'entry_id', 'value' => '']);
+    $hiddenelements .= html_writer::empty_tag('input', ['type' => 'hidden', 'id' => 'source', 'value' => '']);
+    $hiddenelements .= html_writer::empty_tag('input', ['type' => 'hidden', 'id' => 'kafuri',
+        'value' => local_kaltura_get_config()->kaf_uri]);
+    $hiddenelements .= html_writer::empty_tag('input', ['type' => 'hidden', 'id' => 'video_title', 'value' => '']);
+    $hiddenelements .= html_writer::empty_tag('input', ['type' => 'hidden', 'id' => 'uiconf_id', 'value' => '']);
+    $hiddenelements .= html_writer::empty_tag('input', ['type' => 'hidden', 'id' => 'widescreen', 'value' => '']);
+    $hiddenelements .= html_writer::empty_tag('input', ['type' => 'hidden', 'id' => 'height', 'value' => '']);
+    $hiddenelements .= html_writer::empty_tag('input', ['type' => 'hidden', 'id' => 'width', 'value' => '']);
+    $hiddenelements .= html_writer::empty_tag('input', ['type' => 'hidden', 'id' => 'lti_launch_context_id',
+        'value' => $contextid]);
 
-    // Create LTI launch and preview container divs
-    $ltilaunchcontainer = html_writer::tag('div', '', array('id' => TINY_KALTURAMEDIA_OBJECT_TAG_ID));
-    $previewcontainer = html_writer::tag('div', '', array('id' => TINY_KALTURAMEDIA_PREVIEW_IFRAME_TAG_ID));
+    // Create LTI launch and preview container divs.
+    $ltilaunchcontainer = html_writer::tag('div', '', ['id' => TINY_KALTURAMEDIA_OBJECT_TAG_ID]);
+    $previewcontainer = html_writer::tag('div', '', ['id' => TINY_KALTURAMEDIA_PREVIEW_IFRAME_TAG_ID]);
 
-    // This element is used so that the ltiservice.js can simulate a 'click' event.  This tells the plug-in that the user has choosen a video to embed on the page
-    // and it will enable the insert button.
-    $simulateclickdiv = html_writer::tag('input', '', array('id' => 'closeltipanel', 'type' => 'hidden', 'value' => ''));
+    // This element is used so that the ltiservice.js can simulate a 'click' event.  This tells the plug-in that the user has
+    // chosen a video to embed on the page and it will enable the insert button.
+    $simulateclickdiv = html_writer::tag('input', '', ['id' => 'closeltipanel', 'type' => 'hidden', 'value' => '']);
 
     $content = $simulateclickdiv.$ltilaunchcontainer.$previewcontainer.$hiddenelements;
 
-    //$content = $ltilaunchcontainer.$previewcontainer.$hiddenelements;
-    return html_writer::tag('form', $content, array('onsubmit' => 'insertMedia();return false', 'action' => '#'));
+    return html_writer::tag('form', $content, ['onsubmit' => 'insertMedia();return false', 'action' => '#']);
 }
 

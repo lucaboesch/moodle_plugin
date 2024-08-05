@@ -18,9 +18,10 @@
  * Filter post install hook
  *
  * @package    filter_kaltura
+ * @author     Remote-Learner.net Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  Remote Learner.net Inc http://www.remote-learner.net
  */
-
 function xmldb_filter_kaltura_install() {
     global $CFG;
     require_once("$CFG->libdir/filterlib.php");

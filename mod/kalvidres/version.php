@@ -1,4 +1,6 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -21,9 +23,7 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');
-}
+defined('MOODLE_INTERNAL') || die();
 
 $plugin->version = 2024042201;
 $plugin->component  = 'mod_kalvidres';
@@ -31,6 +31,6 @@ $plugin->release    = 'Kaltura release 4.4.9';
 $plugin->requires = 2024042200;
 $plugin->cron       = 0;
 $plugin->maturity = MATURITY_STABLE;
-$plugin->dependencies = array(
-    'local_kaltura' => 2024042201
-);
+$plugin->dependencies = [
+    'local_kaltura' => 2024042201,
+];

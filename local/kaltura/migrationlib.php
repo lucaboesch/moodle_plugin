@@ -15,10 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Kaltura migration functions.  The migration consists of two parts.  The first part is retrieving all Kaltura media entries that were created anytime before
- * the current date; associate those entries to a different category structure used by the KAF instance.  The second part is to look at the metadata for the 
- * Kaltura entry and associate the entry to a category structure used by the KAF instance.  Some Kaltura entries may have been uploaded but never used within
- * a Moodle course, so this is the reason why we must initially retrieve all entries by created date and not by Kaltura category .
+ * Kaltura migration functions.  The migration consists of two parts.  The first part is retrieving all Kaltura media entries that
+ * were created anytime before the current date; associate those entries to a different category structure used by the KAF instance.
+ * The second part is to look at the metadata for the Kaltura entry and associate the entry to a category structure used by the KAF
+ * instance.  Some Kaltura entries may have been uploaded but never used within a Moodle course, so this is the reason why we must
+ * initially retrieve all entries by created date and not by Kaltura category .
  *
  * @package    local_kaltura
  * @author     Remote-Learner.net Inc
@@ -26,13 +27,11 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');
-}
-
-/* This constant is used in the recursive functions as a hard stop flag.  The recursive functions will not go any deeper than this value. */
+/* This constant is used in the recursive functions as a hard stop flag.  The recursive functions will not go any deeper than this
+value. */
 define('KALTURA_MIGRATION_HARD_STOP', 5);
-/* Constants used for padding height and witch values when migrating kaltura entries for video resource, presentation and media assignment. */
+/* Constants used for padding height and witch values when migrating kaltura entries for video resource, presentation and media
+assignment. */
 define('KALTURA_MIGRATION_HEIGHT_PADDING', 100);
 define('KALTURA_MIGRATION_WIDTH_PADDING', 50);
 define('KALTURA_MIGRATION_DEFAULT_HEIGHT', 285);
@@ -56,10 +55,11 @@ function local_kaltura_get_kaltura_client() {
     $client = new KalturaClient($config);
 
     try {
-        $ks = $client->generateSession($configsettings->adminsecret, $USER->id, KalturaSessionType::ADMIN, $configsettings->partner_id);
+        $ks = $client->generateSession($configsettings->adminsecret, $USER->id, KalturaSessionType::ADMIN,
+            $configsettings->partner_id);
         $client->setKs($ks);
     } catch (Exception $ex) {
-        $url = new moodle_url('/admin/settings.php', array('section' => 'local_kaltura'));
+        $url = new moodle_url('/admin/settings.php', ['section' => 'local_kaltura']);
         notice(get_string('migration_cannot_connect', 'local_kaltura'), $url);
     }
 
@@ -90,9 +90,9 @@ function local_kaltura_migration_log_data($method, $data = null) {
  * This function validates that a root category and a profile id have set.  The root category is then queried to find a category id.
  */
 function local_kaltura_retrieve_repository_settings() {
-    local_kaltura_migration_log_data(__FUNCTION__, array(
+    local_kaltura_migration_log_data(__FUNCTION__, [
         'getting repository settings',
-    ));
+    ]);
     $rootcategoryid = get_config(KALTURA_PLUGIN_NAME, 'migration_source_category');
     $metadataprofileid = get_config(KALTURA_PLUGIN_NAME, 'migration_metadata_profile_id');
 
@@ -101,7 +101,6 @@ function local_kaltura_retrieve_repository_settings() {
         $rootcategoryid = get_config(KALTURA_REPO_NAME, 'rootcategory_id');
 
         if (empty($rootcategoryid)) {
-            //notice(get_string('migration_root_category_not_set', 'local_kaltura'));
             set_config('migration_source_category', -1, KALTURA_PLUGIN_NAME);
         }
 
@@ -113,7 +112,6 @@ function local_kaltura_retrieve_repository_settings() {
         $metadataprofileid = get_config(KALTURA_REPO_NAME, 'metadata_profile_id');
 
         if (empty($metadataprofileid)) {
-            //notice(get_string('migration_profile_id_not_set', 'local_kaltura'));
             set_config('migration_metadata_profile_id', -1, KALTURA_PLUGIN_NAME);
         }
 
@@ -127,7 +125,7 @@ function local_kaltura_retrieve_repository_settings() {
  * @return array An array of Kaltura category names.
  */
 function local_kaltura_get_categories() {
-    static $list = array();
+    static $list = [];
 
     $client = local_kaltura_get_kaltura_client();
     $filter = null;
@@ -144,14 +142,16 @@ function local_kaltura_get_categories() {
             asort($list);
         }
     }
-    
+
     local_kaltura_migration_log_data(__FUNCTION__, $list);
-    
+
     return $list;
 }
 
 /**
- * This function retrieves all Kaltura entries that were created before a specified date; and moves the entries to the new KAF category location.
+ * This function retrieves all Kaltura entries that were created before a specified date; and moves the entries to the new KAF
+ * category location.
+ *
  * @param int $targetparentcatid The root category id configured for the KAF instance.
  * @param int $index The page number to return from the paged API output.
  * @param int $numofentries The number of entries to return from the API with.
@@ -159,9 +159,8 @@ function local_kaltura_get_categories() {
  */
 function local_kaltura_move_entries_to_kaf_category_tree($targetparentcatid, $index = 1, $numofentries = 100) {
     $rootcategoryid = get_config(KALTURA_PLUGIN_NAME, 'migration_source_category');
-    if($rootcategoryid === -1)
-    {
-        // skip this part of the migration - repository was never configured in previous version
+    if ($rootcategoryid === -1) {
+        // Skip this part of the migration - repository was never configured in previous version.
         return true;
     }
     // The timestamp used to retrieve Kaltura entries that were created by or before the date.
@@ -175,8 +174,9 @@ function local_kaltura_move_entries_to_kaf_category_tree($targetparentcatid, $in
     // An object whose properties are: id - the 'channels' category id, fullname - the full path of the category.
     static $channelscategory = null;
     // An array of cached old to new category mappings.  array(old category id => new category id).
-    static $cachedcategories = array();
-    // An array of categories that currently exist on Kaltura.  This is used to quickly retrieve the name of the category via the category id.
+    static $cachedcategories = [];
+    // An array of categories that currently exist on Kaltura.  This is used to quickly retrieve the name of the category via the
+    // category id.
     // Ex. array(old category id => category name).
     static $currentcategories = null;
     static $stop = 0;
@@ -219,14 +219,17 @@ function local_kaltura_move_entries_to_kaf_category_tree($targetparentcatid, $in
     // Retrieve the Kaltura entry objects.
     $result = $client->baseEntry->listAction($filter, $pager);
 
-    // If the request was successful and the number of entries returned was greater than zero, get the old category ids and assign the entries them to the new KAF categories.
+    // If the request was successful and the number of entries returned was greater than zero, get the old category ids and assign
+    // the entries them to the new KAF categories.
     if ($result instanceof KalturaBaseEntryListResponse) {
         if (0 < count($result->objects)) {
             // Populate the entries array with key: entry id and value: an array of category ids the entry belongs to.
             $entries = local_kaltura_get_entry_categories($client, $reposettings->migration_source_category, $result->objects);
 
-            // Iterate over the array of entries and check if the category the entry belongs to has also been created under the new target category.
-            $cachedcategories = local_kaltura_assign_entries_to_new_categories($client, $entries, $channelscategory, $cachedcategories, $currentcategories);
+            // Iterate over the array of entries and check if the category the entry belongs to has also been created under the new
+            // target category.
+            $cachedcategories = local_kaltura_assign_entries_to_new_categories($client, $entries, $channelscategory,
+                $cachedcategories, $currentcategories);
 
             $lastentry = end($result->objects);
             local_kaltura_migration_progress::set_existingcategoryrun($lastentry->createdAt - 1);
@@ -241,7 +244,7 @@ function local_kaltura_move_entries_to_kaf_category_tree($targetparentcatid, $in
 
     // Check if the hard stop condition has reached.
     if (KALTURA_MIGRATION_HARD_STOP == $stop) {
-        return array($entries, $cachedcategories);
+        return [$entries, $cachedcategories];
     }
 
     // Recusive call to retrieve the next set of Kaltura entries.
@@ -249,7 +252,9 @@ function local_kaltura_move_entries_to_kaf_category_tree($targetparentcatid, $in
 }
 
 /**
- * This function retrieves all Kaltura entries, created before a specified date and containing profile metadata; and moves the entries to the new KAF category location.
+ * This function retrieves all Kaltura entries, created before a specified date and containing profile metadata; and moves the
+ * entries to the new KAF category location.
+ *
  * @param int $targetparentcatid The root category id configured for the KAF instance.
  * @param int $index The page number to return from the paged API output.
  * @param int $numofentries The number of entries to return from the API with.
@@ -257,9 +262,8 @@ function local_kaltura_move_entries_to_kaf_category_tree($targetparentcatid, $in
  */
 function local_kaltura_move_metadata_entries_to_kaf_category_tree($targetparentcatid, $index = 1, $numofentries = 100) {
     $metadataprofileid = get_config(KALTURA_PLUGIN_NAME, 'migration_metadata_profile_id');
-    if($metadataprofileid === -1)
-    {
-        // skip this part of the migration - repository was never configured in previous version
+    if ($metadataprofileid === -1) {
+        // Skip this part of the migration - repository was never configured in previous version.
         return true;
     }
     // The timestamp used to retrieve Kaltura entries that were created by or before the date.
@@ -275,8 +279,9 @@ function local_kaltura_move_metadata_entries_to_kaf_category_tree($targetparentc
     // An object whose properties are: id - the 'Shared Repository' category id, fullname - the full path of the category.
     static $sharedrepocategory = null;
     // An array of cached old to new category mappings.  array(old category id => new category id).
-    static $cachedcategories = array();
-    // An array of categories that currently exist on Kaltura.  This is used to quickly retrieve the name of the category via the category id.
+    static $cachedcategories = [];
+    // An array of categories that currently exist on Kaltura.  This is used to quickly retrieve the name of the category via the
+    // category id.
     // Ex. array(old category id => category name).
     static $currentcategories = null;
     // A hard stop condition for the recursive method.
@@ -327,17 +332,21 @@ function local_kaltura_move_metadata_entries_to_kaf_category_tree($targetparentc
 
     $result = $client->baseEntry->listAction($filter, $pager);
 
-    // If the request was successful and the number of entries returned was greater than zero, get the old category ids and assign the entries them to the new KAF categories.
+    // If the request was successful and the number of entries returned was greater than zero, get the old category ids and assign
+    // the entries them to the new KAF categories.
     if ($result instanceof KalturaBaseEntryListResponse) {
         if (0 < count($result->objects)) {
             // Populate the entries array with key: entry id and value: an array of category ids the entry belongs to.
-            list($entries, $currentcategories) = local_kaltura_get_entry_metadata($client, $result->objects, $reposettings->migration_metadata_profile_id, $currentcategories);
+            list($entries, $currentcategories) = local_kaltura_get_entry_metadata($client, $result->objects,
+                $reposettings->migration_metadata_profile_id, $currentcategories);
 
-            // Iterate over the array of entries and check if the category the entry belongs to has also been created under the new target category.
-            $cachedcategories = local_kaltura_assign_entries_to_new_course_categories($client, $entries, $channelscategory, $cachedcategories, $currentcategories);
+            // Iterate over the array of entries and check if the category the entry belongs to has also been created under the new
+            // target category.
+            $cachedcategories = local_kaltura_assign_entries_to_new_course_categories($client, $entries, $channelscategory,
+                $cachedcategories, $currentcategories);
 
-            // Get the date of the last processed entry and set the shared category run date.  This allows the user to continue the migration exactly where the
-            // previous run left off.
+            // Get the date of the last processed entry and set the shared category run date.  This allows the user to continue the
+            // migration exactly where the previous run left off.
             $lastentry = end($result->objects);
             local_kaltura_migration_progress::set_sharedcategoryrun($lastentry->createdAt - 1);
         } else {
@@ -360,15 +369,17 @@ function local_kaltura_move_metadata_entries_to_kaf_category_tree($targetparentc
 
 /**
  * This function assigns the Kaltura entries to the new KAF categories.
- * Future TODO: Improve the progress tracking of this method, by inspecting the results of API calls and find entries that already existed but were part of a multi request.
+ * Future TODO: Improve the progress tracking of this method, by inspecting the results of API calls and find entries that already
+ * existed but were part of a multi request.
  *
  * @param KalturaConfiguration $client A Kaltura client object.
  * @param array $entries An array whose key is Kaltura entry ids and value is an array of category ids.
  * @param int $parentcategory The 'channels' category object whose properties are id and fullname.
  * @param array $cachedcategories An array of cateogires that have been created under the KAF root category.
  * The array key is the category name and value is the category ids.
- * @param array $currentcategories An array of current category ids and their names @see local_kaltura_get_categories()
- * @return array An array of cateogires that have been created under the KAF root category. The array key is the category name and value is the category ids.
+ * @param array $currentcategories An array of current category ids and their names {@see local_kaltura_get_categories()}
+ * @return array An array of cateogires that have been created under the KAF root category. The array key is the category name and
+ * value is the category ids.
  */
 function local_kaltura_assign_entries_to_new_categories($client, $entries, $parentcategory, $cachedcategories, $currentcategories) {
     $newcategory = 0;
@@ -390,17 +401,17 @@ function local_kaltura_assign_entries_to_new_categories($client, $entries, $pare
                     $categoryentry = new KalturaCategoryEntry();
                     $categoryentry->categoryId = $cachedcategories[$oldcategoryid];
                     $categoryentry->entryId = $entryid;
-                    try{
+                    try {
                         $result = $client->categoryEntry->add($categoryentry);
                     } catch (Exception $ex) {
-                        local_kaltura_migration_log_data(__FUNCTION__, array(
+                        local_kaltura_migration_log_data(__FUNCTION__, [
                             "failed adding entry to category",
                             $categoryentry->entryId,
                             $categoryentry->categoryId,
                             $ex->getCode(),
                             $ex->getMessage(),
                             base64_encode($ex->getTraceAsString()),
-                        ));
+                        ]);
                     }
                     local_kaltura_migration_progress::increment_entriesmigrated();
                 }
@@ -476,19 +487,23 @@ function local_kaltura_assign_entries_to_new_categories($client, $entries, $pare
 }
 
 /**
- * This is a refactored function of @see local_kaltura_assign_entries_to_new_categories().  The difference is that this adds a Kaltura media to the category
+ * This is a refactored function of {@see local_kaltura_assign_entries_to_new_categories()}.  The difference is that this adds a
+ * Kaltura media to the category
  * Kaltura course category and not the 'InContext' sub-category of the course category.
- * Future TODO: Improve the progress tracking of this method, by inspecting the results of API calls and find entries that already existed but were part of a multi request.
+ * Future TODO: Improve the progress tracking of this method, by inspecting the results of API calls and find entries that already
+ * existed but were part of a multi request.
  *
  * @param KalturaConfiguration $client A Kaltura client object.
  * @param array $entries An array whose key is Kaltura entry ids and value is an array of category ids.
  * @param int $parentcategory The 'channels' category object whose properties are id and fullname.
  * @param array $cachedcategories An array of cateogires that have been created under the KAF root category.
  * The array key is the category name and value is the category ids.
- * @param array $currentcategories An array of current category ids and their names @see local_kaltura_get_categories()
- * @return array An array of cateogires that have been created under the KAF root category. The array key is the category name and value is the category ids.
+ * @param array $currentcategories An array of current category ids and their names {@see local_kaltura_get_categories()}
+ * @return array An array of cateogires that have been created under the KAF root category. The array key is the category name and
+ * value is the category ids.
  */
-function local_kaltura_assign_entries_to_new_course_categories($client, $entries, $parentcategory, $cachedcategories, $currentcategories) {
+function local_kaltura_assign_entries_to_new_course_categories($client, $entries, $parentcategory, $cachedcategories,
+    $currentcategories) {
     $newcategory = 0;
     $counter = 1;
 
@@ -513,17 +528,17 @@ function local_kaltura_assign_entries_to_new_course_categories($client, $entries
                     $categoryentry = new KalturaCategoryEntry();
                     $categoryentry->categoryId = $cachedcategories[$oldcategoryid];
                     $categoryentry->entryId = $entryid;
-                    try{
+                    try {
                         $client->categoryEntry->add($categoryentry);
                     } catch (Exception $ex) {
-                        local_kaltura_migration_log_data(__FUNCTION__, array(
+                        local_kaltura_migration_log_data(__FUNCTION__, [
                             "failed adding entry to category line: ".__LINE__,
                             $categoryentry->entryId,
                             $categoryentry->categoryId,
                             $ex->getCode(),
                             $ex->getMessage(),
                             base64_encode($ex->getTraceAsString()),
-                        ));
+                        ]);
                     }
 
                     local_kaltura_migration_progress::increment_entriesmigrated();
@@ -546,17 +561,17 @@ function local_kaltura_assign_entries_to_new_course_categories($client, $entries
                     $categoryentry = new KalturaCategoryEntry();
                     $categoryentry->categoryId = $result->objects[0]->id;
                     $categoryentry->entryId = $entryid;
-                    try{
+                    try {
                         $categoryresult = $client->categoryEntry->add($categoryentry);
                     } catch (Exception $ex) {
-                        local_kaltura_migration_log_data(__FUNCTION__, array(
+                        local_kaltura_migration_log_data(__FUNCTION__, [
                             "failed adding entry to category line: ".__LINE__,
                             $categoryentry->entryId,
                             $categoryentry->categoryId,
                             $ex->getCode(),
                             $ex->getMessage(),
                             base64_encode($ex->getTraceAsString()),
-                        ));
+                        ]);
                         $categoryresult = null;
                     }
 
@@ -599,20 +614,21 @@ function local_kaltura_assign_entries_to_new_course_categories($client, $entries
 }
 
 /**
- * This function returns the 'channels' category id, using the KAF root category id as part of the filter.  The 'channels' category is created
- * automatically when the user creates a new KAF instance.  This function only needs to determine the category id.  It does not need to create it.
+ * This function returns the 'channels' category id, using the KAF root category id as part of the filter.  The 'channels' category
+ * is created automatically when the user creates a new KAF instance.  This function only needs to determine the category id.
+ * It does not need to create it.
+ *
  * @param KalturaConfiguration $client A Kaltura client object.
  * @param int $rootcatid The KAF root category id.
  * @return object|bool An object whose properties are id and fullname, or false it's not found.
  */
 function local_kaltura_get_channels_id($client, $rootcatid) {
-    static $channelsCategoryObj = null;
-    
-    if(!is_null($channelsCategoryObj))
-    {
-        return $channelsCategoryObj;
+    static $channelscategoryobj = null;
+
+    if (!is_null($channelscategoryobj)) {
+        return $channelscategoryobj;
     }
-    
+
     // Retrieve the array of categories and get the name of the parent category.
     $catnames = local_kaltura_get_categories();
     $parentcatname = $catnames[$rootcatid];
@@ -627,8 +643,8 @@ function local_kaltura_get_channels_id($client, $rootcatid) {
         $category = new stdClass();
         $category->id = $result->objects[0]->id;
         $category->fullname = "$parentcatname>site>channels";
-        
-        $channelsCategoryObj = $category;
+
+        $channelscategoryobj = $category;
         return $category;
     } else {
         return false;
@@ -636,8 +652,9 @@ function local_kaltura_get_channels_id($client, $rootcatid) {
 }
 
 /**
- * This function returns the 'Shared Repository' category id, using the channels category id as part of the filter.  If the the category doesn't exist
- * then is must be created.
+ * This function returns the 'Shared Repository' category id, using the channels category id as part of the filter.
+ * If the the category doesn't exist then is must be created.
+ *
  * @param KalturaConfiguration $client A Kaltura client object.
  * @param int $channelsid The channels category id.
  * @param int $rootcatid The KAF root category id.
@@ -669,29 +686,25 @@ function local_kaltura_get_sharedrepo_id($client, $channelsid, $rootcatid) {
         try {
             $result = $client->category->add($category);
         } catch (Exception $ex) {
-            if($ex->getCode() == 'DUPLICATE_CATEGORY')
-            {
-                local_kaltura_migration_log_data(__FUNCTION__, array(
+            if ($ex->getCode() == 'DUPLICATE_CATEGORY') {
+                local_kaltura_migration_log_data(__FUNCTION__, [
                     "category already exists",
                     $category,
                     $ex->getCode(),
                     $ex->getMessage(),
                     base64_encode($ex->getTraceAsString()),
-                ));
-                // nothing to do - category exists is a good thing
-            }
-            else {
-                local_kaltura_migration_log_data(__FUNCTION__, array(
+                ]);
+                // Nothing to do - category exists is a good thing.
+            } else {
+                local_kaltura_migration_log_data(__FUNCTION__, [
                             "failed adding category",
                             $category,
                             $ex->getCode(),
                             $ex->getMessage(),
                             base64_encode($ex->getTraceAsString()),
-                ));
-                //throw $ex; // not throwing exception. always writing to log.
+                ]);
             }
         }
-        
 
         if ($result instanceof KalturaCategory) {
             $siterepocat->id = $result->id;
@@ -709,21 +722,22 @@ function local_kaltura_get_sharedrepo_id($client, $channelsid, $rootcatid) {
  * @param KalturaConfiguration $client A Kaltura client object.
  * @param KalturaBaseEntryListResponse $entrylist An array of Kaltura entry objects.
  * @param int $profileid A profile id.
- * @param array $currentcategories An array of current category ids and their names @see local_kaltura_get_categories()
- * @return Array An array.  The first index is an array of Kaltura entry ids array(kaltura entry id => array(categories)).  The second index
- * is an array of current courses that will need to be created array(old category id => old category name).
+ * @param array $currentcategories An array of current category ids and their names {@see local_kaltura_get_categories()}
+ * @return array An array. The first index is an array of Kaltura entry ids array(kaltura entry id => array(categories)).
+ * The second index is an array of current courses that will need to be created array(old category id => old category name).
  */
 function local_kaltura_get_entry_metadata($client, $entrylist, $profileid, $currentcategories) {
-    $entries = array();
-    $categories = array();
+    $entries = [];
+    $categories = [];
 
     // Start multi-request, this will send multiple API calls as one batch request.
     $client->startMultiRequest();
 
-    // Iterate ver each entry.  Add it to the entries array (setting the entryid as the key), then retrieve the categories the entry belongs to.
+    // Iterate ver each entry.  Add it to the entries array (setting the entryid as the key), then retrieve the categories the entry
+    // belongs to.
     foreach ($entrylist as $entry) {
         // Call an API function to return all of the categories the entry belongs to.
-        $entries[$entry->id] = array();
+        $entries[$entry->id] = [];
 
         $filter = new KalturaMetadataFilter();
         $filter->metadataProfileIdEqual = $profileid;
@@ -744,8 +758,10 @@ function local_kaltura_get_entry_metadata($client, $entrylist, $profileid, $curr
                     $xml = new SimpleXMLElement($entrymetadata->xml);
                     if (isset($xml->CourseShare)) {
                         $tempcat = (array) $xml->CourseShare;
-                        // Add each category to the current categories array, as it will be required by the @see local_kaltura_assign_entries_to_new_categories().
-                        // With course shared metadata, the category may not actually exist yet.  So insert a place holder that can be easily referenced in later functions.
+                        // Add each category to the current categories array, as it will be required by the
+                        // {@see local_kaltura_assign_entries_to_new_categories()}.
+                        // With course shared metadata, the category may not actually exist yet.  So insert a place holder that can
+                        // be easily referenced in later functions.
                         foreach ($tempcat as $categoryname) {
                             $currentcategories["cs_$categoryname"] = $categoryname;
                             $categories[] = "cs_$categoryname";
@@ -757,31 +773,34 @@ function local_kaltura_get_entry_metadata($client, $entrylist, $profileid, $curr
                     }
 
                     $entries[$entrymetadata->objectId] = $categories;
-                    $categories = array();
+                    $categories = [];
                 }
             }
         }
     }
-    return array($entries, $currentcategories);
+    return [$entries, $currentcategories];
 }
 
 /**
- * This function retrieves all of the categories belonging to a Kaltura entry.
+ *  This function retrieves all of the categories belonging to a Kaltura entry.
+ *
  * @param KalturaConfiguration $client A Kaltura client object.
  * @param int $rootcategoryid The Kaltura root category id.
  * @param KalturaBaseEntryListResponse $entrylist An array of Kaltura entry objects.
- * @return array An array of Kaltura entry ids where the keys of the array are the Kaltura entry ids and the values are array of Kaltura category ids.
+ * @return array An array of Kaltura entry ids where the keys of the array are the Kaltura entry ids and the values are array of
+ * Kaltura category ids.
  */
-function local_kaltura_get_entry_categories($client, $rootcateogryid, $entrylist) {
-    $entries = array();
+function local_kaltura_get_entry_categories($client, $rootcategoryid, $entrylist) {
+    $entries = [];
 
     // Start multi-request, this will send multiple API calls as one batch request.
     $client->startMultiRequest();
 
-    // Iterate ver each entry.  Add it to the entries array (setting the entryid as the key), then retrieve the categories the entry belongs to.
+    // Iterate ver each entry.  Add it to the entries array (setting the entryid as the key), then retrieve the categories the entry
+    // belongs to.
     foreach ($entrylist as $entry) {
         // Call an API function to return all of the categories the entry belongs to.
-        $entries[$entry->id] = array();
+        $entries[$entry->id] = [];
 
         $catfilter = new KalturaCategoryEntryFilter();
         $catfilter->entryIdEqual = $entry->id;
@@ -794,7 +813,7 @@ function local_kaltura_get_entry_categories($client, $rootcateogryid, $entrylist
 
     // Send the batch API request.
     $multirequest = $client->doMultiRequest();
-    $categories = array();
+    $categories = [];
     $entryid = '';
 
     // Iterate over an array of KalturaCategoryEntryListResponse results and save the category ids.
@@ -804,7 +823,7 @@ function local_kaltura_get_entry_categories($client, $rootcateogryid, $entrylist
             if (is_array($entrylist->objects)) {
                 foreach ($entrylist->objects as $entrycategory) {
                     // Check that the categoryFullIds has the root category in it.
-                    if (false === strpos($entrycategory->categoryFullIds, $rootcateogryid)) {
+                    if (false === strpos($entrycategory->categoryFullIds, $rootcategoryid)) {
                         continue;
                     }
                     // Entry Id gets set multiple times...
@@ -816,7 +835,7 @@ function local_kaltura_get_entry_categories($client, $rootcateogryid, $entrylist
             // Save the array of categories to the array of entries.
             $entries[$entryid] = $categories;
             // Reset categories array to make way for a new entry.
-            $categories = array();
+            $categories = [];
         }
     }
 
@@ -824,7 +843,8 @@ function local_kaltura_get_entry_categories($client, $rootcateogryid, $entrylist
 }
 
 /**
- * This function updates records for Kaltura video resrouce and media assignments; by adding a source URL and padding the width and height.
+ * This function updates records for Kaltura video resrouce and media assignments; by adding a source URL and padding the width and
+ * height.
  */
 function local_kaltura_update_activities() {
     global $CFG, $DB;
@@ -834,7 +854,7 @@ function local_kaltura_update_activities() {
 
     // Check if the KAF URi is initialized.
     if (!isset($configsettings->kaf_uri) || empty($configsettings->kaf_uri)) {
-        $url = new moodle_url('/admin/settings.php', array('section' => 'local_kaltura'));
+        $url = new moodle_url('/admin/settings.php', ['section' => 'local_kaltura']);
         notice(get_string('migration_kaf_url_not_set', 'local_kaltura'), $url);
     }
 
@@ -858,11 +878,11 @@ function local_kaltura_update_activities() {
                 try {
                     // Retrieve the Kaltura base entry object.
                     $kalentry = $client->baseEntry->get($record->entry_id);
-                }
-                catch(Exception $ex) {
-                    local_kaltura_migration_log_data(__FUNCTION__, array("could not get entry", $record->entry_id, $ex->getCode(), $ex->getMessage()));
-                    // if from some reason we were not able to get the entry - lets make an empty object to use for empty metadata
-                    // since this is for backward compatibility - we can ignore that for the sake of completing the migration
+                } catch (Exception $ex) {
+                    local_kaltura_migration_log_data(__FUNCTION__, ["could not get entry", $record->entry_id,
+                        $ex->getCode(), $ex->getMessage()]);
+                    // If from some reason we were not able to get the entry - lets make an empty object to use for empty metadata
+                    // since this is for backward compatibility - we can ignore that for the sake of completing the migration.
                     $kalentry = new stdClass();
                 }
                 $newobject = local_kaltura_convert_kaltura_base_entry_object($kalentry);
@@ -899,15 +919,15 @@ function local_kaltura_update_activities() {
                 try {
                     // Retrieve the Kaltura base entry object.
                     $kalentry = $client->baseEntry->get($record->entry_id);
-                }
-                catch(Exception $ex) {
-                    local_kaltura_migration_log_data(__FUNCTION__, array("could not get entry", $record->entry_id, $ex->getCode(), $ex->getMessage()));
-                    // if from some reason we were not able to get the entry - lets make an empty object to use for empty metadata
-                    // since this is for backward compatibility - we can ignore that for the sake of completing the migration
+                } catch (Exception $ex) {
+                    local_kaltura_migration_log_data(__FUNCTION__, ["could not get entry", $record->entry_id,
+                        $ex->getCode(), $ex->getMessage()]);
+                    // If from some reason we were not able to get the entry - lets make an empty object to use for empty metadata
+                    // since this is for backward compatibility - we can ignore that for the sake of completing the migration.
                     $kalentry = new stdClass();
                 }
                 $newobject = local_kaltura_convert_kaltura_base_entry_object($kalentry);
-                // Searlize and base 64 encode the metadata.
+                // Serialize and base 64 encode the metadata.
                 $metadata = local_kaltura_encode_object_for_storage($newobject);
                 $record->metadata = $metadata;
 
@@ -927,7 +947,7 @@ function local_kaltura_set_activities_entries_to_categories() {
 
     // Check if the KAF URi is initialized.
     if (!isset($configsettings->kaf_uri) || empty($configsettings->kaf_uri)) {
-        $url = new moodle_url('/admin/settings.php', array('section' => 'local_kaltura'));
+        $url = new moodle_url('/admin/settings.php', ['section' => 'local_kaltura']);
         notice(get_string('migration_kaf_url_not_set', 'local_kaltura'), $url);
     }
 
@@ -957,12 +977,11 @@ function local_kaltura_set_activities_entries_to_categories() {
 
         foreach ($records as $id => $record) {
             if (!is_null($record->entry_id) && !empty($record->entry_id)) {
-                $assignmentSql = 'SELECT * FROM {kalvidassign} WHERE id = '.$record->vidassignid;
-                $assignmentRecords = $DB->get_records_sql($assignmentSql);
-                if(isset($assignmentRecords[$record->vidassignid]))
-                {
-                    $assignmentRecord = $assignmentRecords[$record->vidassignid];
-                    local_kaltura_set_activity_entry_to_incontext($record->entry_id, $assignmentRecord->course);
+                $assignmentsql = 'SELECT * FROM {kalvidassign} WHERE id = '.$record->vidassignid;
+                $assignmentrecords = $DB->get_records_sql($assignmentsql);
+                if (isset($assignmentrecords[$record->vidassignid])) {
+                    $assignmentrecord = $assignmentrecords[$record->vidassignid];
+                    local_kaltura_set_activity_entry_to_incontext($record->entry_id, $assignmentrecord->course);
                 }
             }
         }
@@ -970,125 +989,111 @@ function local_kaltura_set_activities_entries_to_categories() {
 }
 
 /**
- * This function makes sure that the entry of activity (assignment submission, resource) is assigned to the InContext category or the respective course.
- * This function is used in order to bridge the gap in cases where the moodle kaltura repository 
- * was disabled in V3, or was enabled after resources have already been created which would make those resources to not be in the old category tree.
- * 
- * @param string $entryId
- * @param string $courseId
+ * This function makes sure that the entry of activity (assignment submission, resource) is assigned to the InContext category or
+ * the respective course.
+ * This function is used in order to bridge the gap in cases where the moodle kaltura repository
+ * was disabled in V3, or was enabled after resources have already been created which would make those resources to not be in the
+ * old category tree.
+ *
+ * @param string $entryid
+ * @param string $courseid
  */
-function local_kaltura_set_activity_entry_to_incontext($entryId, $courseId)
-{
+function local_kaltura_set_activity_entry_to_incontext($entryid, $courseid) {
     $client = local_kaltura_get_kaltura_client();
-    $channelCatData = local_kaltura_get_channels_id($client, local_kaltura_migration_progress::get_kafcategoryrootid());
-    
-    $inContextCategoryName = $channelCatData->fullname . '>'. $courseId . '>InContext';
-    
-    // check if the course channel and its InContext categories exists for the given course ID
+    $channelcatdata = local_kaltura_get_channels_id($client, local_kaltura_migration_progress::get_kafcategoryrootid());
+
+    $incontextcategoryname = $channelcatdata->fullname . '>'. $courseid . '>InContext';
+
+    // Check if the course channel and its InContext categories exists for the given course ID.
     $filter = new KalturaCategoryFilter();
 
-    $filter->fullNameStartsWith = $channelCatData->fullname . '>'. $courseId;
-    
-    try
-    {
+    $filter->fullNameStartsWith = $channelcatdata->fullname . '>'. $courseid;
+
+    try {
         $result = $client->category->listAction($filter);
-    }
-    catch(Exception $ex)
-    {
-        local_kaltura_migration_log_data(__FUNCTION__, array("could not list categories", $record->entry_id, $ex->getCode(), $ex->getMessage()));
-    }
-    
-    $inContextCategoryId = null;
-    $courseCategoryId = null;
-    foreach($result->objects as $category)
-    {
-        if($category->fullName == $inContextCategoryName)
-        {
-            $inContextCategoryId = $category->id;
-        }
-        if($category->fullName == $filter->fullNameStartsWith)
-        {
-            $courseCategoryId = $category->id;
-        }
-    }
-    
-    // if not - create the missing categories (channels>{courseID} and channels>{courseID}>InContext)
-    if(is_null($inContextCategoryId))
-    {
-        $isMultiRequest = false;
-        if(is_null($courseCategoryId))
-        {
-            $client->startMultiRequest();
-            $isMultiRequest = true;
-            $courseCategory = new KalturaCategory();
-            $courseCategory->parentId = $channelCatData->id;
-            $courseCategory->name = $courseId;
-            
-            $client->category->add($courseCategory);
-            $courseCategoryId = '{1:result:id}';
-        }
-        
-        $inContextCategory = new KalturaCategory();
-        $inContextCategory->parentId = $courseCategoryId;
-        $inContextCategory->name = 'InContext';
-        
-        $res = $client->category->add($inContextCategory);
-        
-        if($isMultiRequest)
-        {
-            $multiResponse = $client->doMultiRequest();
-            if(isset($multiResponse[1]) && $multiResponse[1] instanceof KalturaCategory)
-            {
-                $inContextCategoryId = $multiResponse[1]->id;
-            }
-        }
-        else
-        {
-            $inContextCategoryId = $res->id;
-        }
-    }
-    
-    // assign the entry to the InContext category
-    if(is_null($inContextCategoryId))
-    {
-        local_kaltura_migration_log_data(__FUNCTION__, array(
-            'Failed getting/creating InContext category for course',
-            $courseId,
-            'single request response: '.base64_encode(print_r($res, true)),
-            'multi request response: '.  base64_encode(print_r($multiResponse, true)),
-        ));
-    }
-    
-    $categoryEntry = new KalturaCategoryEntry();
-    $categoryEntry->entryId = $entryId;
-    $categoryEntry->categoryId = $inContextCategoryId;
-    
-    try
-    {
-        $client->categoryEntry->add($categoryEntry);
     } catch (Exception $ex) {
-        // write to log?
-        if($ex->getCode() == 'CATEGORY_ENTRY_ALREADY_EXISTS')
-        {
-            local_kaltura_migration_log_data(__FUNCTION__, array(
-                "failed edding entry to category - already exists", 
-                $categoryEntry->entryId,
-                $categoryEntry->categoryId,
-                $ex->getCode(), 
-                $ex->getMessage(),
-                $ex->getTraceAsString(),
-            ));
+        local_kaltura_migration_log_data(__FUNCTION__, ["could not list categories", $record->entry_id, $ex->getCode(),
+            $ex->getMessage()]);
+    }
+
+    $incontextcategoryid = null;
+    $coursecategoryid = null;
+    foreach ($result->objects as $category) {
+        if ($category->fullName == $incontextcategoryname) {
+            $incontextcategoryid = $category->id;
         }
-        else
-        {
-            local_kaltura_migration_log_data(__FUNCTION__, array(
-                "failed edding entry to category - reason unexpected", 
-                $categoryEntry->entryId,
-                $categoryEntry->categoryId,
-                $ex->getCode(), 
+        if ($category->fullName == $filter->fullNameStartsWith) {
+            $coursecategoryid = $category->id;
+        }
+    }
+
+    // If not - create the missing categories (channels>{courseID} and channels>{courseID}>InContext).
+    if (is_null($incontextcategoryid)) {
+        $ismultirequest = false;
+        if (is_null($coursecategoryid)) {
+            $client->startMultiRequest();
+            $ismultirequest = true;
+            $coursecategory = new KalturaCategory();
+            $coursecategory->parentId = $channelcatdata->id;
+            $coursecategory->name = $courseid;
+
+            $client->category->add($coursecategory);
+            $coursecategoryid = '{1:result:id}';
+        }
+
+        $incontextcategory = new KalturaCategory();
+        $incontextcategory->parentId = $coursecategoryid;
+        $incontextcategory->name = 'InContext';
+
+        $res = $client->category->add($incontextcategory);
+
+        if ($ismultirequest) {
+            $multiresponse = $client->doMultiRequest();
+            if (isset($multiresponse[1]) && $multiresponse[1] instanceof KalturaCategory) {
+                $incontextcategoryid = $multiresponse[1]->id;
+            }
+        } else {
+            $incontextcategoryid = $res->id;
+        }
+    }
+
+    // Assign the entry to the InContext category.
+    if (is_null($incontextcategoryid)) {
+        // phpcs:disable moodle.PHP.ForbiddenFunctions.Found
+        local_kaltura_migration_log_data(__FUNCTION__, [
+            'Failed getting/creating InContext category for course',
+            $courseid,
+            'single request response: '.base64_encode(print_r($res, true)),
+            'multi request response: '.  base64_encode(print_r($multiresponse, true)),
+        ]);
+    }
+
+    $categoryentry = new KalturaCategoryEntry();
+    $categoryentry->entryId = $entryid;
+    $categoryentry->categoryId = $incontextcategoryid;
+
+    try {
+        $client->categoryEntry->add($categoryentry);
+    } catch (Exception $ex) {
+        // Write to log?
+        if ($ex->getCode() == 'CATEGORY_ENTRY_ALREADY_EXISTS') {
+            local_kaltura_migration_log_data(__FUNCTION__, [
+                "failed edding entry to category - already exists",
+                $categoryentry->entryId,
+                $categoryentry->categoryId,
+                $ex->getCode(),
                 $ex->getMessage(),
                 $ex->getTraceAsString(),
-            ));
+            ]);
+        } else {
+            local_kaltura_migration_log_data(__FUNCTION__, [
+                "failed edding entry to category - reason unexpected",
+                $categoryentry->entryId,
+                $categoryentry->categoryId,
+                $ex->getCode(),
+                $ex->getMessage(),
+                $ex->getTraceAsString(),
+            ]);
         }
     }
 }
@@ -1106,7 +1111,8 @@ function local_kaltura_build_source_url($entryid, $height, $width, $uiconfid) {
     $newwidth = empty($width) ? KALTURA_MIGRATION_DEFAULT_WIDTH : $width;
     $kafuri = local_kaltura_get_config()->kaf_uri;
     $kafuri = local_kaltura_format_uri($kafuri);
-    $url = 'http://'.$kafuri."/browseandembed/index/media/entryid/{$entryid}/showDescription/true/showTitle/true/showTags/true/showDuration/true/showOwner/";
+    $url = 'http://'.$kafuri.'/browseandembed/index/media/entryid/{$entryid}/showDescription/true/showTitle/true/showTags/true/'.
+        'showDuration/true/showOwner/';
     $url .= "true/showUploadDate/false/playerSize/{$newwidth}x{$newheight}/playerSkin/{$uiconfid}/";
     return $url;
 }
@@ -1134,7 +1140,8 @@ class local_kaltura_migration_progress {
      */
     public function __construct() {
         $config = get_config(KALTURA_PLUGIN_NAME);
-        self::$migrationstarted = (isset($config->migrationstarted) && !empty($config->migrationstarted)) ? $config->migrationstarted : 0;
+        self::$migrationstarted = (isset($config->migrationstarted) && !empty($config->migrationstarted)) ?
+            $config->migrationstarted : 0;
         self::$existingcategoryrun = isset($config->existingcategoryrun) ? $config->existingcategoryrun : 0;
         self::$sharedcategoryrun = isset($config->sharedcategoryrun) ? $config->sharedcategoryrun : 0;
         self::$categoriescreated = isset($config->categoriescreated) ? $config->categoriescreated : 0;
@@ -1146,7 +1153,7 @@ class local_kaltura_migration_progress {
      * Returns the timestamp value of the date created for the last entry that was processed.
      * @return int Unix timestamp.
      */
-    static public function get_existingcategoryrun() {
+    public static function get_existingcategoryrun() {
         return self::$existingcategoryrun;
     }
 
@@ -1154,7 +1161,7 @@ class local_kaltura_migration_progress {
      * Set the timestamp value.
      * @param int $data A unix timestamp.
      */
-    static public function set_existingcategoryrun($data) {
+    public static function set_existingcategoryrun($data) {
         self::$existingcategoryrun = $data;
     }
 
@@ -1162,7 +1169,7 @@ class local_kaltura_migration_progress {
      * Returns the timestampe value of the date created for the last entry metadata that was processed.
      * @return int Unix timestamp.
      */
-    static public function get_sharedcategoryrun() {
+    public static function get_sharedcategoryrun() {
         return self::$sharedcategoryrun;
     }
 
@@ -1170,7 +1177,7 @@ class local_kaltura_migration_progress {
      * Set the timestamp value.
      * @param int $data A unix timestamp.
      */
-    static public function set_sharedcategoryrun($data) {
+    public static function set_sharedcategoryrun($data) {
         self::$sharedcategoryrun = $data;
     }
 
@@ -1178,14 +1185,14 @@ class local_kaltura_migration_progress {
      * Returns the number of categories created.
      * @return int Unix timestamp.
      */
-    static public function get_categoriescreated() {
+    public static function get_categoriescreated() {
         return self::$categoriescreated;
     }
 
     /**
      * Increment categories created.
      */
-    static public function increment_categoriescreated() {
+    public static function increment_categoriescreated() {
         self::$categoriescreated++;
     }
 
@@ -1193,14 +1200,14 @@ class local_kaltura_migration_progress {
      * Returns the number of entries that were migrated.
      * @return int Unix timestamp.
      */
-    static public function get_entriesmigrated() {
+    public static function get_entriesmigrated() {
         return self::$entriesmigrated;
     }
 
     /**
      * Increment entries migrated.
      */
-    static public function increment_entriesmigrated() {
+    public static function increment_entriesmigrated() {
         self::$entriesmigrated++;
     }
 
@@ -1208,14 +1215,14 @@ class local_kaltura_migration_progress {
      * Returns the timestamp for the original date the migration was started.
      * @return int Unix timestamp.
      */
-    static public function get_migrationstarted() {
+    public static function get_migrationstarted() {
         return self::$migrationstarted;
     }
 
     /**
      * Sets the time the migration started time to now.
      */
-    static public function init_migrationstarted() {
+    public static function init_migrationstarted() {
         self::$migrationstarted = time();
     }
 
@@ -1223,7 +1230,7 @@ class local_kaltura_migration_progress {
      * Returns the KAF root category id
      * @return int Unix timestamp.
      */
-    static public function get_kafcategoryrootid() {
+    public static function get_kafcategoryrootid() {
         return self::$kafcategoryrootid;
     }
 
@@ -1231,14 +1238,14 @@ class local_kaltura_migration_progress {
      * Sets the the KAF root category id.
      * @param int $data a Kaltura category id.
      */
-    static public function set_kafcategoryrootid($data) {
+    public static function set_kafcategoryrootid($data) {
         self::$kafcategoryrootid = $data;
     }
 
     /**
      * Reset all stats to nothing.
      */
-    static public function reset_all() {
+    public static function reset_all() {
         self::$migrationstarted = 0;
         self::$entriesmigrated = 0;
         self::$categoriescreated = 0;

@@ -1,4 +1,6 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -30,20 +32,24 @@
  */
 class backup_kalvidres_activity_structure_step extends backup_activity_structure_step {
 
+    /**
+     * This function defines the structure used to backup the activity.
+     * @return backup_nested_element The $activitystructure wrapped by the common 'activity' element.
+     */
     protected function define_structure() {
 
-        // Define each element separated
-        $kalvidres = new backup_nested_element('kalvidres', array('id'), array(
+        // Define each element separated.
+        $kalvidres = new backup_nested_element('kalvidres', ['id'], [
             'name', 'intro', 'introformat', 'entry_id', 'video_title',
-            'uiconf_id', 'widescreen', 'height', 'width', 'source', 'timemodified', 'timecreated'));
+            'uiconf_id', 'widescreen', 'height', 'width', 'source', 'timemodified', 'timecreated', ]);
 
-        // Define sources
-        $kalvidres->set_source_table('kalvidres', array('id' => backup::VAR_ACTIVITYID));
+        // Define sources.
+        $kalvidres->set_source_table('kalvidres', ['id' => backup::VAR_ACTIVITYID]);
 
-        // Define file annotations
-        $kalvidres->annotate_files('mod_kalvidres', 'intro', null); // This files area doesn't have itemid
+        // Define file annotations.
+        $kalvidres->annotate_files('mod_kalvidres', 'intro', null); // This files area doesn't have itemid.
 
-        // Return the root element, wrapped into standard activity structure
+        // Return the root element, wrapped into standard activity structure.
         return $this->prepare_activity_structure($kalvidres);
     }
 }

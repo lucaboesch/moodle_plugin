@@ -36,7 +36,8 @@ $site = get_site();
 $PAGE->navbar->add(get_string('administrationsite'));
 $PAGE->navbar->add(get_string('plugins', 'admin'));
 $PAGE->navbar->add(get_string('localplugins'));
-$PAGE->navbar->add(get_string('pluginname', 'local_kaltura'), new moodle_url('/admin/settings.php', array('section' => 'local_kaltura')));
+$PAGE->navbar->add(get_string('pluginname', 'local_kaltura'), new moodle_url('/admin/settings.php',
+    ['section' => 'local_kaltura']));
 $PAGE->navbar->add(get_string('download_logs_title', 'local_kaltura'));
 $PAGE->set_url($url);
 $PAGE->set_context($context);
@@ -51,7 +52,7 @@ require_login(null, false);
 
 require_capability('local/kaltura:download_trace_logs', $context);
 
-$url = new moodle_url('/admin/settings.php', array('section' => 'local_kaltura'));
+$url = new moodle_url('/admin/settings.php', ['section' => 'local_kaltura']);
 $downloadurl = new moodle_url('/local/kaltura/download_log.php');
 
 $form = new local_kaltura_download_log_form();
@@ -65,23 +66,25 @@ if ($data = $form->get_data()) {
 
     // User hit submit button.  Check for records since the configured date.
     if (isset($data->submitbutton)) {
-        $rs = $DB->get_recordset_select('local_kaltura_log', 'timecreated >= ?', array($data->logs_start_time), 'timecreated ASC');
+        $rs = $DB->get_recordset_select('local_kaltura_log', 'timecreated >= ?', [$data->logs_start_time], 'timecreated ASC');
 
         // Check if the recordset contains any data.
         if ($rs->valid()) {
             header('Content-Type: text/csv; charset=utf-8');
             header('Content-Disposition: attachment; filename=kalturalogs.csv');
 
-            // create a file pointer connected to the output stream
+            // Create a file pointer connected to the output stream.
             $output = fopen('php://output', 'w');
 
-            // output the column headings
-            fputcsv($output, array(get_string('request', 'local_kaltura'), get_string('time', 'local_kaltura'),
-                get_string('module', 'local_kaltura'), get_string('endpoint', 'local_kaltura'), get_string('data', 'local_kaltura')));
+            // Output the column headings.
+            fputcsv($output, [get_string('request', 'local_kaltura'),
+                get_string('time', 'local_kaltura'), get_string('module', 'local_kaltura'),
+                get_string('endpoint', 'local_kaltura'), get_string('data', 'local_kaltura'), ]);
 
             foreach ($rs as $record) {
                 $record->data = json_encode(unserialize($record->data));
-                fputcsv($output, array($record->type, userdate($record->timecreated), $record->module, $record->endpoint, $record->data));
+                fputcsv($output, [$record->type, userdate($record->timecreated), $record->module, $record->endpoint,
+                    $record->data]);
             }
 
             $rs->close();

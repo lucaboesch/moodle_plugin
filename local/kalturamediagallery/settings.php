@@ -14,19 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/*
- * @package    local
- * @subpackage kalturamediagallery
+/**
+ * Kaltura Media Gallery settings.
+ *
+ * @package    local_kalturamediagallery
  * @copyright  2016 Queen Mary University of London
  * @author     Phil Lello <phil@dunlop-lello.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
  */
 
 defined('MOODLE_INTERNAL') || die('Invalid access');
 
 global $CFG;
-require_once $CFG->dirroot. '/local/kalturamediagallery/lib.php';
+require_once($CFG->dirroot. '/local/kalturamediagallery/lib.php');
 
 if ($hassiteconfig) {
     $settings = new admin_settingpage(
@@ -34,7 +34,7 @@ if ($hassiteconfig) {
             get_string('pluginname', 'local_kalturamediagallery')
         );
 
-    //heading
+    // Heading.
     $setting = new admin_setting_heading(
             'heading',
             '', get_string('setting_heading_desc', 'local_kalturamediagallery')
@@ -42,16 +42,18 @@ if ($hassiteconfig) {
     $setting->plugin = 'local_kalturamediagallery';
     $settings->add($setting);
 
-    //link location
+    // Link location.
     $setting = new admin_setting_configselect(
             'link_location',
             get_string('link_location', 'local_kalturamediagallery'),
             get_string('link_location_desc', 'local_kalturamediagallery'),
             LOCAL_KALTURAMEDIAGALLERY_LINK_LOCATION_NAVIGATION_BLOCK,
-            array(
-                LOCAL_KALTURAMEDIAGALLERY_LINK_LOCATION_NAVIGATION_BLOCK => get_string('link_location_navigation', 'local_kalturamediagallery'),
-                LOCAL_KALTURAMEDIAGALLERY_LINK_LOCATION_COURSE_SETTINGS => get_string('link_location_course_settings', 'local_kalturamediagallery'),
-            )
+            [
+                LOCAL_KALTURAMEDIAGALLERY_LINK_LOCATION_NAVIGATION_BLOCK => get_string('link_location_navigation',
+                    'local_kalturamediagallery'),
+                LOCAL_KALTURAMEDIAGALLERY_LINK_LOCATION_COURSE_SETTINGS => get_string('link_location_course_settings',
+                    'local_kalturamediagallery'),
+            ]
         );
     $setting->plugin = 'local_kalturamediagallery';
     $settings->add($setting);

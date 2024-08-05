@@ -1,4 +1,6 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -21,6 +23,8 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * This function returns true if the assignment submission period is over
  *
@@ -41,8 +45,8 @@ require_once(dirname(dirname(dirname(__FILE__))).'/local/kaltura/locallib.php');
  * Check if the assignment submission end date has passed or if late submissions
  * are prohibited
  *
- * @param object - Kaltura instance video assignment object
- * @return bool - true if expired, otherwise false
+ * @param object $kalvidassign Kaltura instance video assignment object
+ * @return bool True if expired, otherwise false
  */
 function kalvidassign_assignemnt_submission_expired($kalvidassign) {
     $expired = false;
@@ -56,7 +60,7 @@ function kalvidassign_assignemnt_submission_expired($kalvidassign) {
 
 /**
  * Retrieve a list of users who have submitted assignments
- * 
+ *
  * @param int $kalvidassignid The assignment id.
  * @param string $filter Filter results by assignments that have been submitted or
  * assignment that need to be graded or no filter at all.
@@ -75,11 +79,12 @@ function kalvidassign_get_submissions($kalvidassignid, $filter = '') {
             break;
     }
 
-    $param = array('instanceid' => $kalvidassignid);
+    $param = ['instanceid' => $kalvidassignid];
     $where .= ' vidassignid = :instanceid';
 
     // Reordering the fields returned to make it easier to use in the grade_get_grades function.
-    $columns = 'userid,vidassignid,entry_id,grade,submissioncomment,format,teacher,mailed,timemarked,timecreated,timemodified,source,width,height';
+    $columns = 'userid,vidassignid,entry_id,grade,submissioncomment,format,teacher,mailed,timemarked,timecreated,timemodified,'.
+        'source,width,height';
     $records = $DB->get_records_select('kalvidassign_submission', $where, $param, 'timemodified DESC', $columns);
 
     if (empty($records)) {
@@ -98,12 +103,13 @@ function kalvidassign_get_submissions($kalvidassignid, $filter = '') {
 function kalvidassign_get_submission($kalvidassignid, $userid) {
     global $DB;
 
-    $param = array('instanceid' => $kalvidassignid, 'userid' => $userid);
+    $param = ['instanceid' => $kalvidassignid, 'userid' => $userid];
     $where = '';
     $where .= ' vidassignid = :instanceid AND userid = :userid';
 
     // Reordering the fields returned to make it easier to use in the grade_get_grades function.
-    $columns = 'userid,id,vidassignid,entry_id,grade,submissioncomment,format,teacher,mailed,timemarked,timecreated,timemodified,source,width,height';
+    $columns = 'userid,id,vidassignid,entry_id,grade,submissioncomment,format,teacher,mailed,timemarked,timecreated,timemodified,'.
+        'source,width,height';
     $record = $DB->get_record_select('kalvidassign_submission', $where, $param, '*');
 
     if (empty($record)) {
@@ -123,7 +129,7 @@ function kalvidassign_get_submission($kalvidassignid, $userid) {
 function kalvidassign_get_submission_grade_object($instanceid, $userid) {
     global $DB;
 
-    $param = array('kvid' => $instanceid, 'userid' => $userid);
+    $param = ['kvid' => $instanceid, 'userid' => $userid];
 
     $sql = "SELECT u.id, u.id AS userid, s.grade AS rawgrade, s.submissioncomment AS feedback, s.format AS feedbackformat,
                    s.teacher AS usermodified, s.timemarked AS dategraded, s.timemodified AS datesubmitted
@@ -142,28 +148,33 @@ function kalvidassign_get_submission_grade_object($instanceid, $userid) {
 
 /**
  * This function validates the course module id and returns the course module object, course object and activity instance object.
+ *
+ * @param int $cmid The course module id.
  * @return array an array with the following values array(course module object, $course object, activity instance object).
  */
 function kalvidassign_validate_cmid ($cmid) {
     global $DB;
 
     if (!$cm = get_coursemodule_from_id('kalvidassign', $cmid)) {
-        print_error('invalidcoursemodule');
+        throw new moodle_exception('invalidcoursemodule');
     }
 
-    if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
-        print_error('coursemisconf');
+    if (!$course = $DB->get_record('course', ['id' => $cm->course])) {
+        throw new moodle_exception('coursemisconf');
     }
 
-    if (!$kalvidassignobj = $DB->get_record('kalvidassign', array('id' => $cm->instance))) {
-        print_error('invalidid', 'kalvidassign');
+    if (!$kalvidassignobj = $DB->get_record('kalvidassign', ['id' => $cm->instance])) {
+        throw new moodle_exception('invalidid', 'kalvidassign');
     }
 
-    return array($cm, $course, $kalvidassignobj);
+    return [$cm, $course, $kalvidassignobj];
 }
 
 /**
  * This function returns HTML markup to signify a submission was late.
+ *
+ * @param int $timesubmitted The time the submission was submitted.
+ * @param int $timedue The time the submission was due.
  * @return string HTML markup
  */
 function kalvidassign_display_lateness($timesubmitted, $timedue) {
@@ -187,8 +198,6 @@ function kalvidassign_display_lateness($timesubmitted, $timedue) {
  * Sends an email to ALL teachers in the course (or in the group if using separate groups).
  * Uses the methods kalvidassign_email_teachers_text() and kalvidassign_email_teachers_html() to construct the content.
  *
- * @global object
- * @global object
  * @param object $cm Kaltura video assignment course module object.
  * @param string $name Name of the video assignment instance.
  * @param object $submission The submission that has changed.
@@ -198,7 +207,7 @@ function kalvidassign_display_lateness($timesubmitted, $timedue) {
 function kalvidassign_email_teachers($cm, $name, $submission, $context) {
     global $CFG, $DB, $COURSE;
 
-    $user = $DB->get_record('user', array('id'=>$submission->userid));
+    $user = $DB->get_record('user', ['id' => $submission->userid]);
 
     if ($teachers = kalvidassign_get_graders($cm, $user, $context)) {
 
@@ -211,7 +220,7 @@ function kalvidassign_email_teachers($cm, $name, $submission, $context) {
             $info->username = fullname($user, true);
             $info->assignment = format_string($name, true);
             $info->url = $CFG->wwwroot.'/mod/kalvidassign/grade_submissions.php?cmid='.$cm->id;
-            $info->timeupdated = strftime('%c', $submission->timemodified);
+            $info->timeupdated = date('c', $submission->timemodified);
             $info->courseid = $cm->course;
             $info->cmid     = $cm->id;
 
@@ -253,7 +262,7 @@ function kalvidassign_get_graders($cm, $user, $context) {
     // Potential graders.
     $potgraders = get_enrolled_users($context, 'mod/kalvidassign:gradesubmission', 0, 'u.*', null, 0, 0, true);
 
-    $graders = array();
+    $graders = [];
     // Separate groups are being used.
     if (groups_get_activity_groupmode($cm) == SEPARATEGROUPS) {
         // Try to find all groups.
@@ -261,7 +270,7 @@ function kalvidassign_get_graders($cm, $user, $context) {
             foreach ($groups as $group) {
                 foreach ($potgraders as $t) {
                     if ($t->id == $user->id) {
-                        continue; // do not send self
+                        continue; // Do not send self.
                     }
                     if (groups_is_member($group->id, $t->id)) {
                         $graders[$t->id] = $t;
@@ -269,13 +278,13 @@ function kalvidassign_get_graders($cm, $user, $context) {
                 }
             }
         } else {
-            // user not in group, try to find graders without group
+            // User not in group, try to find graders without group.
             foreach ($potgraders as $t) {
                 if ($t->id == $user->id) {
-                    // do not send self.
+                    // Do not send self.
                     continue;
                 }
-                // ugly hack.
+                // Ugly hack.
                 if (!groups_get_all_groups($cm->course, $t->id)) {
                     $graders[$t->id] = $t;
                 }
@@ -284,7 +293,7 @@ function kalvidassign_get_graders($cm, $user, $context) {
     } else {
         foreach ($potgraders as $t) {
             if ($t->id == $user->id) {
-                // do not send self.
+                // Do not send self.
                 continue;
             }
             $graders[$t->id] = $t;
@@ -296,18 +305,19 @@ function kalvidassign_get_graders($cm, $user, $context) {
 /**
  * Creates the text content for emails to teachers
  *
- * @param $info object The info used by the 'emailteachermail' language string
+ * @param object $info The info used by the 'emailteachermail' language string
  * @return string
  */
 function kalvidassign_email_teachers_text($info) {
     global $DB;
 
-    $param    = array('id' => $info->courseid);
+    $param    = ['id' => $info->courseid];
     $course   = $DB->get_record('course', $param);
     $posttext = '';
 
     if (!empty($course)) {
-        $posttext  = format_string($course->shortname, true, $course->id).' -> '.get_string('modulenameplural', 'kalvidassign').'  -> ';
+        $posttext  = format_string($course->shortname, true, $course->id).' -> '.
+            get_string('modulenameplural', 'kalvidassign').'  -> ';
         $posttext .= format_string($info->assignment, true, $course->id)."\n";
         $posttext .= '---------------------------------------------------------------------'."\n";
         $posttext .= get_string("emailteachermail", "kalvidassign", $info)."\n";
@@ -321,21 +331,24 @@ function kalvidassign_email_teachers_text($info) {
  * Creates the html content for emails to teachers
  *
  * @param object $info The info used by the 'emailteachermailhtml' language string
- * @return string
+ * @return string The html content
+ * @throws coding_exception
+ * @throws dml_exception
+ * @throws moodle_exception
  */
 function kalvidassign_email_teachers_html($info) {
     global $CFG, $DB;
 
-    $param    = array('id' => $info->courseid);
+    $param    = ['id' => $info->courseid];
     $course   = $DB->get_record('course', $param);
     $posthtml = '';
 
     if (!empty($course)) {
         $posthtml .= html_writer::start_tag('p');
-        $attr = array('href' => new moodle_url('/course/view.php', array('id' => $course->id)));
+        $attr = ['href' => new moodle_url('/course/view.php', ['id' => $course->id])];
         $posthtml .= html_writer::tag('a', format_string($course->shortname, true, $course->id), $attr);
         $posthtml .= '->';
-        $attr = array('href' => new moodle_url('/mod/kalvidassign/view.php', array('id' => $info->cmid)));
+        $attr = ['href' => new moodle_url('/mod/kalvidassign/view.php', ['id' => $info->cmid])];
         $posthtml .= html_writer::tag('a', format_string($info->assignment, true, $course->id), $attr);
         $posthtml .= html_writer::end_tag('p');
         $posthtml .= html_writer::start_tag('hr');
@@ -347,6 +360,8 @@ function kalvidassign_email_teachers_html($info) {
 
 /**
  * This function retrieves a list of enrolled users with the capability to submit to the activity.
+ *
+ * @param object $cm The course module object.
  * @return array An array of user objects.
  */
 function kalvidassign_get_assignment_students($cm) {

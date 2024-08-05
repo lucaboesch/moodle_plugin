@@ -1,4 +1,6 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -21,6 +23,8 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot.'/mod/kalvidres/backup/moodle2/backup_kalvidres_stepslib.php');
 require_once($CFG->dirroot.'/mod/kalvidres/backup/moodle2/backup_kalvidres_settingslib.php');
 
@@ -33,33 +37,35 @@ class backup_kalvidres_activity_task extends backup_activity_task {
      * Define (add) particular settings this activity can have
      */
     protected function define_my_settings() {
-        // No particular settings for this activity
+        // No particular settings for this activity.
     }
 
     /**
      * Define (add) particular steps this activity can have
      */
     protected function define_my_steps() {
-        // Choice only has one structure step
+        // Choice only has one structure step.
         $this->add_step(new backup_kalvidres_activity_structure_step('kalvidres_structure', 'kalvidres.xml'));
     }
 
     /**
      * Code the transformations to perform in the activity in
      * order to get transportable (encoded) links
+     *
+     * @param string $content some HTML text that eventually contains URLs to the activity instance scripts
      */
-    static public function encode_content_links($content) {
+    public static function encode_content_links($content) {
         global $CFG;
 
         $base = preg_quote($CFG->wwwroot, "/");
 
-        // Link to the list of kalvidress
-        $search="/(".$base."\/mod\/kalvidres\/index.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@KALVIDRESINDEX*$2@$', $content);
+        // Link to the list of kalvidres.
+        $search = "/(".$base."\/mod\/kalvidres\/index.php\?id\=)([0-9]+)/";
+        $content = preg_replace($search, '$@KALVIDRESINDEX*$2@$', $content);
 
-        // Link to kalvidres view by moduleid
-        $search="/(".$base."\/mod\/kalvidres\/view.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@KALVIDRESVIEWBYID*$2@$', $content);
+        // Link to kalvidres view by moduleid.
+        $search = "/(".$base."\/mod\/kalvidres\/view.php\?id\=)([0-9]+)/";
+        $content = preg_replace($search, '$@KALVIDRESVIEWBYID*$2@$', $content);
 
         return $content;
     }

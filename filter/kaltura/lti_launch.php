@@ -56,7 +56,7 @@ if ($context instanceof context_course) {
     $course = $SITE;
 }
 
-$launch = array();
+$launch = [];
 $launch['id'] = 1;
 $launch['cmid'] = 0;
 $launch['title'] = 'Kaltura video resource';

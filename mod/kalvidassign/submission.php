@@ -1,4 +1,6 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -25,7 +27,7 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/locallib.php');
 
 if (!confirm_sesskey()) {
-    print_error('confirmsesskeybad', 'error');
+    throw new moodle_exception('confirmsesskeybad', 'error');
 }
 
 $entryid = required_param('entry_id', PARAM_TEXT);
@@ -40,44 +42,45 @@ global $USER, $OUTPUT, $DB, $PAGE;
 $source = local_kaltura_build_kaf_uri($source);
 
 if (! $cm = get_coursemodule_from_id('kalvidassign', $cmid)) {
-    print_error('invalidcoursemodule');
+    throw new moodle_exception('invalidcoursemodule');
 }
 
-if (! $course = $DB->get_record('course', array('id' => $cm->course))) {
-    print_error('coursemisconf');
+if (! $course = $DB->get_record('course', ['id' => $cm->course])) {
+    throw new moodle_exception('coursemisconf');
 }
 
-if (! $kalvidassignobj = $DB->get_record('kalvidassign', array('id' => $cm->instance))) {
-    print_error('invalidid', 'kalvidassign');
+if (! $kalvidassignobj = $DB->get_record('kalvidassign', ['id' => $cm->instance])) {
+    throw new moodle_exception('invalidid', 'kalvidassign');
 }
 
 require_course_login($course->id, true, $cm);
 
-$PAGE->set_url('/mod/kalvidassign/view.php', array('id' => $course->id));
+$PAGE->set_url('/mod/kalvidassign/view.php', ['id' => $course->id]);
 $PAGE->set_title(format_string($kalvidassignobj->name));
 $PAGE->set_heading($course->fullname);
 
 
 if (kalvidassign_assignemnt_submission_expired($kalvidassignobj)) {
-    print_error('assignmentexpired', 'kalvidassign', 'course/view.php?id='.$course->id);
+    throw new moodle_exception('assignmentexpired', 'kalvidassign', 'course/view.php?id='.$course->id);
 }
 
 echo $OUTPUT->header();
 
 if (empty($entryid)) {
-    print_error('emptyentryid', 'kalvidassign', new moodle_url('/mod/kalvidassign/view.php', array('id' => $cm->id)));
+    throw new moodle_exception('emptyentryid', 'kalvidassign', new moodle_url('/mod/kalvidassign/view.php', ['id' => $cm->id]));
 }
 
 // If the entry_id field is not empty but the source field is empty, then the data for this activity has not yet been migrated.
 if (empty($source)) {
-    print_error('activity_not_migrated', 'kalvidassign', new moodle_url('/mod/kalvidassign/view.php', array('id' => $cm->id)));
+    throw new moodle_exception('activity_not_migrated', 'kalvidassign',
+        new moodle_url('/mod/kalvidassign/view.php', ['id' => $cm->id]));
 }
 
-$param = array('vidassignid' => $kalvidassignobj->id, 'userid' => $USER->id);
+$param = ['vidassignid' => $kalvidassignobj->id, 'userid' => $USER->id];
 $submission = $DB->get_record('kalvidassign_submission', $param);
 
 $time = time();
-$url = new moodle_url('/mod/kalvidassign/view.php', array('id' => $cm->id));
+$url = new moodle_url('/mod/kalvidassign/view.php', ['id' => $cm->id]);
 
 if ($submission) {
     $submission->entry_id = $entryid;
@@ -103,10 +106,10 @@ if ($submission) {
         echo $OUTPUT->single_button($url, $continue, 'post');
         echo html_writer::end_tag('center');
 
-        $event = \mod_kalvidassign\event\assignment_submitted::create(array(
+        $event = \mod_kalvidassign\event\assignment_submitted::create([
                     'objectid'  => $kalvidassignobj->id,
-                    'context'   => context_module::instance($cm->id)
-        ));
+                    'context'   => context_module::instance($cm->id),
+        ]);
         $event->trigger();
     } else {
         notice(get_string('failedtoinsertsubmission', 'kalvidassign'), $url, $course);
@@ -137,10 +140,10 @@ if ($submission) {
         echo $OUTPUT->single_button($url, $continue, 'post');
         echo html_writer::end_tag('center');
 
-        $event = \mod_kalvidassign\event\assignment_submitted::create(array(
+        $event = \mod_kalvidassign\event\assignment_submitted::create([
                     'objectid'  => $kalvidassignobj->id,
-                    'context'   => context_module::instance($cm->id)
-        ));
+                    'context'   => context_module::instance($cm->id),
+        ]);
         $event->trigger();
     } else {
         notice(get_string('failedtoinsertsubmission', 'kalvidassign'), $url, $course);
@@ -150,7 +153,7 @@ if ($submission) {
 
 $context = $PAGE->context;
 
-// Email an alert to the teacher
+// Email an alert to the teacher.
 if ($kalvidassignobj->emailteachers) {
     kalvidassign_email_teachers($cm, $kalvidassignobj->name, $submission, $context);
 }

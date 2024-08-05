@@ -1,4 +1,6 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -27,7 +29,7 @@ require_once(dirname(__FILE__).'/renderer.php');
 require_once(dirname(__FILE__).'/locallib.php');
 require_once(dirname(__FILE__).'/grade_preferences_form.php');
 
-$id      = required_param('cmid', PARAM_INT);           // Course Module ID
+$id      = required_param('cmid', PARAM_INT);           // Course Module ID.
 $mode    = optional_param('mode', 0, PARAM_TEXT);
 $tifirst = optional_param('tifirst', '', PARAM_TEXT);
 $tilast  = optional_param('tilast', '', PARAM_TEXT);
@@ -38,7 +40,7 @@ $url->param('cmid', $id);
 
 if (!empty($mode)) {
     if (!confirm_sesskey()) {
-        print_error('confirmsesskeybad', 'error');
+        throw new moodle_exception('confirmsesskeybad', 'error');
     }
 }
 
@@ -61,17 +63,17 @@ echo $OUTPUT->header();
 
 require_capability('mod/kalvidassign:gradesubmission', context_module::instance($cm->id));
 
-$event = \mod_kalvidassign\event\grade_submissions_page_viewed::create(array(
+$event = \mod_kalvidassign\event\grade_submissions_page_viewed::create([
     'objectid'  => $kalvidassignobj->id,
-    'context'   => context_module::instance($cm->id)
-));
+    'context'   => context_module::instance($cm->id),
+]);
 $event->trigger();
 
-// Ensure we use the appropriate group mode, either course or module
+// Ensure we use the appropriate group mode, either course or module.
 if (($course->groupmodeforce) == 1) {
-    $prefform =  new kalvidassign_gradepreferences_form(null, array('cmid' => $cm->id, 'groupmode' => $course->groupmode));
+    $prefform = new kalvidassign_gradepreferences_form(null, ['cmid' => $cm->id, 'groupmode' => $course->groupmode]);
 } else {
-     $prefform =  new kalvidassign_gradepreferences_form(null, array('cmid' => $cm->id, 'groupmode' => $cm->groupmode));
+     $prefform = new kalvidassign_gradepreferences_form(null, ['cmid' => $cm->id, 'groupmode' => $cm->groupmode]);
 }
 
 $data = null;
@@ -104,16 +106,16 @@ $data->group_filter = get_user_preferences('kalvidassign_group_filter', 0);
 
 $gradedata = data_submitted();
 
-// Check if fast grading was passed to the form and process the data
+// Check if fast grading was passed to the form and process the data.
 if (!empty($gradedata->mode)) {
 
-    $usersubmission = array();
+    $usersubmission = [];
     $time = time();
     $updated = false;
 
     foreach ($gradedata->users as $userid => $val) {
 
-        $param = array('vidassignid' => $kalvidassignobj->id, 'userid' => $userid);
+        $param = ['vidassignid' => $kalvidassignobj->id, 'userid' => $userid];
 
         $usersubmissions = $DB->get_record('kalvidassign_submission', $param);
 
@@ -121,7 +123,7 @@ if (!empty($gradedata->mode)) {
 
             if (array_key_exists($userid, $gradedata->menu)) {
 
-                // Update grade
+                // Update grade.
                 if (($gradedata->menu[$userid] != $usersubmissions->grade)) {
 
                     $usersubmissions->grade = $gradedata->menu[$userid];
@@ -142,7 +144,7 @@ if (!empty($gradedata->mode)) {
                 }
             }
 
-            // trigger grade event
+            // Trigger grade event.
             if ($DB->update_record('kalvidassign_submission', $usersubmissions)) {
 
                 $grade = new stdClass();
@@ -154,17 +156,17 @@ if (!empty($gradedata->mode)) {
                 kalvidassign_grade_item_update($kalvidassignobj, $grade);
 
                 // Add to log only if updating.
-                $event = \mod_kalvidassign\event\grades_updated::create(array(
+                $event = \mod_kalvidassign\event\grades_updated::create([
                             'context'   => context_module::instance($cm->id),
-                            'other'     => array(
-                                'crud'    => 'u'
-                            )
-                ));
+                            'other'     => [
+                                'crud'    => 'u',
+                            ],
+                ]);
                 $event->trigger();
             }
 
         } else {
-            // No user submission however the instructor has submitted grade data
+            // No user submission however the instructor has submitted grade data.
             $usersubmissions                = new stdClass();
             $usersubmissions->vidassignid   = $cm->instance;
             $usersubmissions->userid        = $userid;
@@ -173,11 +175,12 @@ if (!empty($gradedata->mode)) {
             $usersubmissions->timemarked    = $time;
 
             // Need to prevent completely empty submissions from getting entered
-            // into the video submissions' table
-            // Check for unchanged grade value and an empty feedback value
+            // into the video submissions' table.
+            // Check for unchanged grade value and an empty feedback value.
             $emptygrade = array_key_exists($userid, $gradedata->menu) && '-1' == $gradedata->menu[$userid];
 
-            $emptycomment = array_key_exists($userid, $gradedata->submissioncomment) && empty($gradedata->submissioncomment[$userid]);
+            $emptycomment = array_key_exists($userid, $gradedata->submissioncomment) &&
+                empty($gradedata->submissioncomment[$userid]);
 
             if ($emptygrade && $emptycomment ) {
                 continue;
@@ -191,7 +194,7 @@ if (!empty($gradedata->mode)) {
                 $usersubmissions->submissioncomment = $gradedata->submissioncomment[$userid];
             }
 
-            // trigger grade event
+            // Trigger grade event.
             if ($DB->insert_record('kalvidassign_submission', $usersubmissions)) {
 
                 $grade = new stdClass();
@@ -202,13 +205,13 @@ if (!empty($gradedata->mode)) {
 
                 kalvidassign_grade_item_update($kalvidassignobj, $grade);
 
-                // Add to log only if updating
-                $event = \mod_kalvidassign\event\grades_updated::create(array(
+                // Add to log only if updating.
+                $event = \mod_kalvidassign\event\grades_updated::create([
                             'context'   => context_module::instance($cm->id),
-                            'other'     => array(
-                                'crud'      => 'c'
-                            )
-                ));
+                            'other'     => [
+                                'crud'      => 'c',
+                            ],
+                ]);
                 $event->trigger();
             }
 
@@ -218,7 +221,8 @@ if (!empty($gradedata->mode)) {
     }
 }
 
-$renderer->display_submissions_table($cm, $data->group_filter, $data->filter, $data->perpage, $data->quickgrade, $tifirst, $tilast, $page);
+$renderer->display_submissions_table($cm, $data->perpage, $data->group_filter, $data->filter, $data->quickgrade, $tifirst, $tilast,
+    $page);
 
 $prefform->set_data($data);
 $prefform->display();

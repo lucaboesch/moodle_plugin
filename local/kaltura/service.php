@@ -57,13 +57,13 @@ $serviceurl = new moodle_url('/local/kaltura/service.php');
 // Log the request.
 $enablelogging = get_config(KALTURA_PLUGIN_NAME, 'enable_logging');
 if (!empty($enablelogging)) {
-    $param = array(
+    $param = [
         'url' => $url,
         'width' => $width,
         'height' => $height,
         'entryid'  => $entryid,
-        '$title' => $title
-    );
+        '$title' => $title,
+    ];
     local_kaltura_log_data(KAF_BROWSE_EMBED_MODULE, $serviceurl->out(), $param, false);
 }
 
@@ -92,7 +92,7 @@ $metadata = local_kaltura_encode_object_for_storage($metadata);
 $PAGE->set_url($serviceurl);
 $PAGE->set_context(context_system::instance());
 $previewltilaunchurl = new moodle_url('/local/kaltura/bsepreview_ltilaunch.php?playurl=' . urlencode($url));
-$params = array(
+$params = [
     'iframeurl' => urlencode($url),
     'width' => $width,
     'height' => $height,
@@ -101,14 +101,11 @@ $params = array(
     'metadata' => $metadata,
     'editor' => $editor,
     'previewltilauncher' => $previewltilaunchurl->out(),
-);
-if($editor == 'atto')
-{
+];
+if ($editor == 'atto') {
     require_once('attoembed.php');
-}
-else
-{
-    $PAGE->requires->yui_module('moodle-local_kaltura-ltiservice', 'M.local_kaltura.init', array($params));
+} else {
+    $PAGE->requires->yui_module('moodle-local_kaltura-ltiservice', 'M.local_kaltura.init', [$params]);
     $PAGE->set_pagelayout('embedded');
 
     echo $OUTPUT->header();

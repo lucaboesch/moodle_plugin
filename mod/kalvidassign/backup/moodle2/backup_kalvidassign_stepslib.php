@@ -1,4 +1,6 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -40,7 +42,7 @@ class backup_kalvidassign_activity_structure_step extends backup_activity_struct
         $userinfo = $this->get_setting_value('userinfo');
 
         // Define each element separated.
-        $columns = array(
+        $columns = [
                 'course',
                 'name',
                 'intro',
@@ -52,13 +54,13 @@ class backup_kalvidassign_activity_structure_step extends backup_activity_struct
                 'emailteachers',
                 'grade',
                 'timecreated',
-                'timemodified'
-        );
-        $kalvidassign = new backup_nested_element('kalvidassign', array('id'), $columns);
+                'timemodified',
+        ];
+        $kalvidassign = new backup_nested_element('kalvidassign', ['id'], $columns);
 
         $issues = new backup_nested_element('submissions');
 
-        $columns = array(
+        $columns = [
                 'userid',
                 'entry_id',
                 'source',
@@ -71,20 +73,20 @@ class backup_kalvidassign_activity_structure_step extends backup_activity_struct
                 'mailed',
                 'timemarked',
                 'timecreated',
-                'timemodified'
-        );
-        $issue = new backup_nested_element('submission', array('id'), $columns);
+                'timemodified',
+        ];
+        $issue = new backup_nested_element('submission', ['id'], $columns);
 
         // Build the tree.
         $kalvidassign->add_child($issues);
         $issues->add_child($issue);
 
         // Define sources.
-        $kalvidassign->set_source_table('kalvidassign', array('id' => backup::VAR_ACTIVITYID));
+        $kalvidassign->set_source_table('kalvidassign', ['id' => backup::VAR_ACTIVITYID]);
 
         // All the rest of elements only happen if we are including user info.
         if ($userinfo) {
-            $issue->set_source_table('kalvidassign_submission', array('vidassignid' => backup::VAR_PARENTID));
+            $issue->set_source_table('kalvidassign_submission', ['vidassignid' => backup::VAR_PARENTID]);
         }
 
         // Annotate the user id's where required.

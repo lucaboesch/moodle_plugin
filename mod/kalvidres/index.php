@@ -26,7 +26,7 @@
 require_once('../../config.php');
 
 $id = required_param('id', PARAM_INT); // Course ID.
-$course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $id], '*', MUST_EXIST);
 
 require_course_login($course, true);
 $PAGE->set_pagelayout('incourse');
@@ -36,7 +36,7 @@ $strintro = get_string("moduleintro");                                   // Desc
 $strsectionname  = get_string('sectionname', 'format_'.$course->format); // Section.
 $strplural = get_string("modulenameplural", "mod_kalvidres");            // Video Resource.
 
-$PAGE->set_url('/mod/kalvidres/index.php', array('id' => $course->id));
+$PAGE->set_url('/mod/kalvidres/index.php', ['id' => $course->id]);
 $PAGE->set_title($course->shortname.': '.$strplural);
 $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add($strplural);
@@ -55,11 +55,11 @@ $table = new html_table();
 $table->attributes['class'] = 'generaltable mod_index';
 
 if ($usesections) {
-    $table->head  = array ($strsectionname, $strplural, $strintro);
-    $table->align = array ('center', 'left', 'left');
+    $table->head  = [$strsectionname, $strplural, $strintro];
+    $table->align = ['center', 'left', 'left'];
 } else {
-    $table->head  = array  ($strlastmodified, $strplural, $strintro);
-    $table->align = array  ('left', 'left', 'left');
+    $table->head  = [$strlastmodified, $strplural, $strintro];
+    $table->align = ['left', 'left', 'left'];
 }
 
 $currentsection = '';
@@ -83,11 +83,11 @@ foreach ($vidres as $res) {
 
     $class = $res->visible ? '' : 'class="dimmed"'; // Hidden modules are dimmed.
 
-    $table->data[] = array (
+    $table->data[] = [
         $printsection,
         "<a $class href=\"view.php?id=$res->coursemodule\">".$icon.format_string($res->name)."</a>",
-        format_module_intro('kalvidres', $res, $res->coursemodule)
-    );
+        format_module_intro('kalvidres', $res, $res->coursemodule),
+    ];
 
 }
 

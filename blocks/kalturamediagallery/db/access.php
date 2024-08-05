@@ -14,28 +14,37 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Kaltura Media Gallery block plug-in access.php
+ *
+ * @package    block_kalturamediagallery
+ * @author     Remote-Learner.net Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = array(
-    'block/kalturamediagallery:myaddinstance' => array(
+$capabilities = [
+    'block/kalturamediagallery:myaddinstance' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-            'user' => CAP_PROHIBIT
-        ),
+        'archetypes' => [
+            'user' => CAP_PROHIBIT,
+        ],
 
-        'clonepermissionsfrom' => 'moodle/my:manageblocks'
-    ),
+        'clonepermissionsfrom' => 'moodle/my:manageblocks',
+    ],
 
-    'block/kalturamediagallery:addinstance' => array(
+    'block/kalturamediagallery:addinstance' => [
         'riskbitmask' => RISK_SPAM | RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_BLOCK,
-        'archetypes' => array(
+        'archetypes' => [
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ),
+            'manager' => CAP_ALLOW,
+        ],
 
-        'clonepermissionsfrom' => 'moodle/site:manageblocks'
-    ),
-);
+        'clonepermissionsfrom' => 'moodle/site:manageblocks',
+    ],
+];

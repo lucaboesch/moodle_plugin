@@ -33,7 +33,7 @@ require_login();
 $context = context_user::instance($USER->id);
 require_capability('local/mymedia:view', $context);
 
-$launch = array();
+$launch = [];
 $launch['id'] = 1;
 $launch['cmid'] = 0;
 $launch['title'] = 'My Media';

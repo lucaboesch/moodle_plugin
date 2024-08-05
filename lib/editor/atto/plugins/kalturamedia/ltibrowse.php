@@ -17,7 +17,7 @@
 /**
  * Kaltura media LTI launch page.
  *
- * @package    tinymce_kalturamedia
+ * @package    atto_kalturamedia
  * @author     Remote-Learner.net Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
@@ -25,7 +25,6 @@
 
 require_once(dirname(dirname(dirname(dirname(dirname(dirname(__FILE__)))))).'/config.php');
 require_once($CFG->dirroot.'/local/kaltura/locallib.php');
-//require_once('renderer.php');
 
 global $PAGE, $USER;
 
@@ -38,7 +37,7 @@ $withblocks = optional_param('withblocks', 0, PARAM_INT);
 
 $context = context::instance_by_id($contextid);
 
-$launch = array();
+$launch = [];
 $course = 0;
 
 if ($context instanceof context_course) {
@@ -47,7 +46,7 @@ if ($context instanceof context_course) {
 } else if ($context instanceof context_system || $context instanceof context_coursecat) {
     $course = get_course(1);
 } else {
-    // Find parent context
+    // Find parent context.
     $parentcontexts = $context->get_parent_contexts(false);
 
     foreach ($parentcontexts as $ctx) {

@@ -1,4 +1,6 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -21,13 +23,14 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');
-}
+defined('MOODLE_INTERNAL') || die();
 
 require_once(dirname(dirname(dirname(__FILE__))).'/course/moodleform_mod.php');
 require_once(dirname(dirname(dirname(__FILE__))).'/local/kaltura/locallib.php');
 
+/**
+ * The mod_form class for the kalvidres module.
+ */
 class mod_kalvidres_mod_form extends moodleform_mod {
     /** @var string Part of the id for the add video button. */
     protected $addvideobutton = 'add_video';
@@ -38,25 +41,25 @@ class mod_kalvidres_mod_form extends moodleform_mod {
     public function definition() {
         global $CFG, $COURSE, $PAGE;
 
-        $params = array(
+        $params = [
             'withblocks' => 0,
             'courseid' => $COURSE->id,
             'width' => KALTURA_PANEL_WIDTH,
-            'height' => KALTURA_PANEL_HEIGHT
-        );
+            'height' => KALTURA_PANEL_HEIGHT,
+        ];
 
         $url = new moodle_url('/mod/kalvidres/lti_launch.php', $params);
 
-        $params = array(
+        $params = [
             'addvidbtnid' => 'id_'.$this->addvideobutton,
             'ltilaunchurl' => $url->out(false),
             'height' => KALTURA_PANEL_HEIGHT,
             'width' => KALTURA_PANEL_WIDTH,
-            'modulename' => 'kalvidres'
-        );
+            'modulename' => 'kalvidres',
+        ];
 
-        $PAGE->requires->yui_module('moodle-local_kaltura-ltipanel', 'M.local_kaltura.init', array($params), null, true);
-        // Make replace media language string available to the YUI modules
+        $PAGE->requires->yui_module('moodle-local_kaltura-ltipanel', 'M.local_kaltura.init', [$params], null, true);
+        // Make replace media language string available to the YUI modules.
         $PAGE->requires->string_for_js('replace_video', 'kalvidres');
         $PAGE->requires->string_for_js('browse_and_embed', 'local_kaltura');
 
@@ -64,48 +67,48 @@ class mod_kalvidres_mod_form extends moodleform_mod {
 
         // This line is needed to avoid a PHP warning when the form is submitted.
         // Because this value is set as the default for one of the formslib elements.
-        $uiconf_id = '';
+        $uiconfid = '';
 
         /* Hidden fields */
-        $attr = array('id' => 'entry_id');
+        $attr = ['id' => 'entry_id'];
         $mform->addElement('hidden', 'entry_id', '', $attr);
         $mform->setType('entry_id', PARAM_NOTAGS);
 
-        $attr = array('id' => 'source');
+        $attr = ['id' => 'source'];
         $mform->addElement('hidden', 'source', '', $attr);
         $mform->setType('source', PARAM_URL);
 
-        $attr = array('id' => 'video_title');
+        $attr = ['id' => 'video_title'];
         $mform->addElement('hidden', 'video_title', 'x', $attr);
         $mform->setType('video_title', PARAM_TEXT);
 
-        $attr = array('id' => 'uiconf_id');
+        $attr = ['id' => 'uiconf_id'];
         $mform->addElement('hidden', 'uiconf_id', '', $attr);
-        $mform->setDefault('uiconf_id', $uiconf_id);
+        $mform->setDefault('uiconf_id', $uiconfid);
         $mform->setType('uiconf_id', PARAM_INT);
 
-        $attr = array('id' => 'widescreen');
+        $attr = ['id' => 'widescreen'];
         $mform->addElement('hidden', 'widescreen', 'x', $attr);
         $mform->setDefault('widescreen', 0);
         $mform->setType('widescreen', PARAM_INT);
 
-        $attr = array('id' => 'height');
+        $attr = ['id' => 'height'];
         $mform->addElement('hidden', 'height', '', $attr);
         $mform->setDefault('height', '365');
         $mform->setType('height', PARAM_TEXT);
 
-        $attr = array('id' => 'width');
+        $attr = ['id' => 'width'];
         $mform->addElement('hidden', 'width', '', $attr);
         $mform->setDefault('width', '400');
         $mform->setType('width', PARAM_TEXT);
 
-        $attr = array('id' => 'metadata');
+        $attr = ['id' => 'metadata'];
         $mform->addElement('hidden', 'metadata', '', $attr);
         $mform->setType('metadata', PARAM_TEXT);
 
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
-        $mform->addElement('text', 'name', get_string('name', 'kalvidres'), array('size' => '64'));
+        $mform->addElement('text', 'name', get_string('name', 'kalvidres'), ['size' => '64']);
 
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
@@ -118,7 +121,7 @@ class mod_kalvidres_mod_form extends moodleform_mod {
         $this->standard_intro_elements();
 
         $mform->addElement('header', 'video', get_string('video_hdr', 'kalvidres'));
-        $mform->setExpanded('video',true);
+        $mform->setExpanded('video', true);
         $this->add_video_definition($mform);
 
         $this->standard_coursemodule_elements();
@@ -140,7 +143,7 @@ class mod_kalvidres_mod_form extends moodleform_mod {
         $mform->addElement('static', 'add_video_thumb', '&nbsp;', $thumbnail);
         $mform->addElement('html', $videopreview);
 
-        $videogroup = array();
+        $videogroup = [];
         if ($addinstance) {
             $videogroup[] =& $mform->createElement('button', $this->addvideobutton, get_string('add_video', 'kalvidres'));
         } else {
@@ -153,7 +156,8 @@ class mod_kalvidres_mod_form extends moodleform_mod {
     /**
      * This functions returns the markup to display a thumbnail image.
      * @param bool $hide Set to true to hide it, otherwise false.  When set to hide the thumbnail markup is still rendered
-     * but the display style is set to none.  The reason for this is that the YUI module uses the img tag to place the iframe just below it.
+     * but the display style is set to none.  The reason for this is that the YUI module uses the img tag to place the iframe
+     * just below it.
      * As well as to hide the image tag when a new video is selected.
      * @return string Returns an image element markup.
      */
@@ -162,12 +166,12 @@ class mod_kalvidres_mod_form extends moodleform_mod {
         $alt    = get_string('add_video', 'kalvidres');
         $title  = get_string('add_video', 'kalvidres');
 
-        $attr = array(
+        $attr = [
             'id' => 'video_thumbnail',
             'src' => $source->out(),
             'alt' => $alt,
-            'title' => $title
-        );
+            'title' => $title,
+        ];
 
         if ($hide) {
             $attr['style'] = 'display:none';
@@ -188,7 +192,7 @@ class mod_kalvidres_mod_form extends moodleform_mod {
         $height = empty($this->current->height) ? 'opx' : $this->current->height.'px';
         $source = empty($this->current->source) ? '' : $this->current->source;
 
-        $params = array(
+        $params = [
             'id' => 'contentframe',
             'class' => 'kaltura-player-iframe',
             'src' => $source,
@@ -196,22 +200,23 @@ class mod_kalvidres_mod_form extends moodleform_mod {
             'width' => $width,
             'allowfullscreen' => 'true',
             'allow' => 'autoplay *; fullscreen *; encrypted-media *; camera *; microphone *; display-capture *;',
-        );
+        ];
 
         if ($hide) {
             $params['style'] = 'display: none';
         }
 
-        // If the source attribute is not empty, initiate an LTI launch to avoid having ACL issues when another user with permissions edits the module.
+        // If the source attribute is not empty, initiate an LTI launch to avoid having ACL issues when another user
+        // with permissions edits the module.
         // This also assists with full screen functionality on some mobile devices.
         if (!empty($source)) {
-            $ltiparams = array(
+            $ltiparams = [
                 'courseid' => $this->current->course,
                 'height' => $height,
                 'width' => $width,
                 'withblocks' => 0,
-                'source' => $source
-            );
+                'source' => $source,
+            ];
 
             $url = new moodle_url('/mod/kalvidres/lti_launch.php', $ltiparams);
             $params['src'] = $url->out(false);
@@ -219,11 +224,11 @@ class mod_kalvidres_mod_form extends moodleform_mod {
 
         $iframe = html_writer::tag('iframe', '', $params);
 
-        $iframeContainer = html_writer::tag('div', $iframe, array(
-            'class' => 'kaltura-player-container'
-        ));
+        $iframecontainer = html_writer::tag('div', $iframe, [
+            'class' => 'kaltura-player-container',
+        ]);
 
-        return $iframeContainer;
+        return $iframecontainer;
     }
 
     /**
@@ -234,7 +239,7 @@ class mod_kalvidres_mod_form extends moodleform_mod {
      * @return array $errors Array of error messages
      */
     public function validation($data, $files) {
-        $errors = array();
+        $errors = [];
 
         if (empty($data['source'])) {
             $errors['add_video_thumb'] = get_string('novidsource', 'kalvidres');

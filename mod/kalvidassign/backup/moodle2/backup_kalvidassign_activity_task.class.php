@@ -1,4 +1,6 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -20,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/mod/kalvidassign/backup/moodle2/backup_kalvidassign_stepslib.php');
 require_once($CFG->dirroot.'/mod/kalvidassign/backup/moodle2/backup_kalvidassign_settingslib.php');
@@ -48,19 +52,22 @@ class backup_kalvidassign_activity_task extends backup_activity_task {
     /**
      * Code the transformations to perform in the activity in
      * order to get transportable (encoded) links.
+     *
+     * @param string $content The content to be transformed.
+     * @return array|string|string[]|null
      */
-    static public function encode_content_links($content) {
+    public static function encode_content_links($content) {
         global $CFG;
 
         $base = preg_quote($CFG->wwwroot, '/');
 
         // Link to the list of kalvidassigns.
-        $search="/(".$base."\/mod\/kalvidassign\/index.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@KALVIDASSIGNINDEX*$2@$', $content);
+        $search = "/(".$base."\/mod\/kalvidassign\/index.php\?id\=)([0-9]+)/";
+        $content = preg_replace($search, '$@KALVIDASSIGNINDEX*$2@$', $content);
 
         // Link to kalvidassign view by moduleid.
-        $search="/(".$base."\/mod\/kalvidassign\/view.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@KALVIDASSIGNVIEWBYID*$2@$', $content);
+        $search = "/(".$base."\/mod\/kalvidassign\/view.php\?id\=)([0-9]+)/";
+        $content = preg_replace($search, '$@KALVIDASSIGNVIEWBYID*$2@$', $content);
 
         return $content;
     }

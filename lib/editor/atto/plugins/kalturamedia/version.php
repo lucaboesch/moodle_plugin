@@ -17,7 +17,7 @@
 /**
  * Atto text editor integration version file.
  *
- * @package    atto_media
+ * @package    atto_kalturamedia
  * @copyright  2013 Damyon Wiese  <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,6 +28,6 @@ $plugin->version   = 2024042201;        // The current plugin version (Date: YYY
 $plugin->release = 'Kaltura release 4.4.9';
 $plugin->requires  = 2024042200;        // Requires this Moodle version.
 $plugin->component = 'atto_kalturamedia';  // Full name of the plugin (used for diagnostics).
-$plugin->dependencies = array(
-    'local_kaltura' => 2024042201
-);
+$plugin->dependencies = [
+    'local_kaltura' => 2024042201,
+];

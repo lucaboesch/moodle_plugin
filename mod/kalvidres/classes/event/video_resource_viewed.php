@@ -13,17 +13,17 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
- 
+
 /**
  * The video_resource_viewed event.
  *
- * @package    mod
- * @subpackage kalvidres
+ * @package    mod_kalvidres
  * @copyright  2015 Rex Lorenzo <rexlorenzo@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace mod_kalvidres\event;
-defined('MOODLE_INTERNAL') || die();
+
 /**
  * The video_resource_viewed event class.
  *
@@ -32,27 +32,41 @@ defined('MOODLE_INTERNAL') || die();
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/
 class video_resource_viewed extends \core\event\base {
+
+    /**
+     * Initialise event parameters.
+     */
     protected function init() {
-        $this->data['crud'] = 'r'; // c(reate), r(ead), u(pdate), d(elete)
+        $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
         $this->data['objecttable'] = 'kalvidres';
     }
- 
+
+    /**
+     * Returns localised event name.
+     *
+     * @return string
+     */
     public static function get_name() {
         return get_string('eventvideo_resource_viewed', 'kalvidres');
     }
- 
+
+    /**
+     * Returns non-localised event description with id's for admin use only.
+     *
+     * @return string
+     */
     public function get_description() {
         return "The user with id '{$this->userid}' viewed the Kaltura video resource with "
         . "the course module id '{$this->contextinstanceid}'.";
     }
- 
+
+    /**
+     * Returns relevant URL.
+     *
+     * @return \moodle_url
+     */
     public function get_url() {
-        return new \moodle_url('/mod/kalvidres/view.php', array('id' => $this->contextinstanceid));
-    }
- 
-    public function get_legacy_logdata() {
-        return array($this->courseid, 'kalvidres', 'view video resource',
-            $this->get_url(), $this->objectid, $this->contextinstanceid);
+        return new \moodle_url('/mod/kalvidres/view.php', ['id' => $this->contextinstanceid]);
     }
 }

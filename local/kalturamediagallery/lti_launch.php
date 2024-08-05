@@ -35,7 +35,7 @@ $context = context_course::instance($courseid);
 require_capability('local/kalturamediagallery:view', $context);
 $course = get_course($courseid);
 
-$launch = array();
+$launch = [];
 $launch['id'] = 1;
 $launch['cmid'] = 0;
 $launch['title'] = 'Kaltura media gallery';

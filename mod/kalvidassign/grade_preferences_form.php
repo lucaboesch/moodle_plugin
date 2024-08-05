@@ -1,4 +1,6 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -21,14 +23,15 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');
-}
+defined('MOODLE_INTERNAL') || die();
 
 require_once(dirname(dirname(dirname(__FILE__))).'/course/moodleform_mod.php');
 require_once(dirname(__FILE__).'/locallib.php');
 require_once($CFG->libdir.'/formslib.php');
 
+/**
+ * I    mplementation of the preferences in the form of a moodleform.
+ */
 class kalvidassign_gradepreferences_form extends moodleform {
     /**
      * This function defines all of the elements displayed on the grade preferences form.
@@ -45,16 +48,16 @@ class kalvidassign_gradepreferences_form extends moodleform {
 
         $context = context_module::instance($this->_customdata['cmid']);
 
-        $group_opt = array();
-        $groups    = array();
+        $groupopt = [];
+        $groups    = [];
 
-        // If the user doesn't have access to all group print the groups they have access to
+        // If the user doesn't have access to all group print the groups they have access to.
         if (!has_capability('moodle/site:accessallgroups', $context)) {
 
-            // Determine the groups mode
+            // Determine the groups mode.
             switch($this->_customdata['groupmode']) {
                 case NOGROUPS:
-                    // No groups, do nothing
+                    // No groups, do nothing.
                     break;
                 case SEPARATEGROUPS:
                     $groups = groups_get_all_groups($COURSE->id, $USER->id);
@@ -64,35 +67,35 @@ class kalvidassign_gradepreferences_form extends moodleform {
                     break;
             }
 
-            $group_opt[0] = get_string('all', 'mod_kalvidassign');
+            $groupopt[0] = get_string('all', 'mod_kalvidassign');
 
-            foreach ($groups as $group_obj) {
-                $group_opt[$group_obj->id] = $group_obj->name;
+            foreach ($groups as $groupobj) {
+                $groupopt[$groupobj->id] = $groupobj->name;
             }
 
         } else {
             $groups = groups_get_all_groups($COURSE->id);
 
-            $group_opt[0] = get_string('all', 'mod_kalvidassign');
+            $groupopt[0] = get_string('all', 'mod_kalvidassign');
 
-            foreach ($groups as $group_obj) {
-                $group_opt[$group_obj->id] = $group_obj->name;
+            foreach ($groups as $groupobj) {
+                $groupopt[$groupobj->id] = $groupobj->name;
             }
 
         }
 
-        $mform->addElement('select', 'group_filter', get_string('group_filter', 'mod_kalvidassign'), $group_opt);
+        $mform->addElement('select', 'group_filter', get_string('group_filter', 'mod_kalvidassign'), $groupopt);
 
-        $filters = array(
+        $filters = [
             KALASSIGN_ALL => get_string('all', 'kalvidassign'),
             KALASSIGN_REQ_GRADING => get_string('reqgrading', 'kalvidassign'),
-            KALASSIGN_SUBMITTED => get_string('submitted', 'kalvidassign')
-        );
+            KALASSIGN_SUBMITTED => get_string('submitted', 'kalvidassign'),
+        ];
 
         $mform->addElement('select', 'filter', get_string('show'), $filters);
         $mform->addHelpButton('filter', 'show', 'kalvidassign');
 
-        $mform->addElement('text', 'perpage', get_string('pagesize', 'kalvidassign'), array('size' => 3, 'maxlength' => 3));
+        $mform->addElement('text', 'perpage', get_string('pagesize', 'kalvidassign'), ['size' => 3, 'maxlength' => 3]);
         $mform->setType('perpage', PARAM_INT);
         $mform->addHelpButton('perpage', 'pagesize', 'kalvidassign');
 

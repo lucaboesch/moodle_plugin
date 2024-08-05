@@ -1,4 +1,6 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -30,16 +32,26 @@
  */
 class restore_kalvidres_activity_structure_step extends restore_activity_structure_step {
 
+    /**
+     * Define the structure for the kalvidres activity
+     *
+     * @return backup_nested_element
+     */
     protected function define_structure() {
 
-        $paths = array();
+        $paths = [];
 
         $paths[] = new restore_path_element('kalvidres', '/activity/kalvidres');
 
-        // Return the paths wrapped into standard activity structure
+        // Return the paths wrapped into standard activity structure.
         return $this->prepare_activity_structure($paths);
     }
 
+    /**
+     * Process kalvidres information
+     *
+     * @param array $data information
+     */
     protected function process_kalvidres($data) {
         global $DB;
 
@@ -49,14 +61,17 @@ class restore_kalvidres_activity_structure_step extends restore_activity_structu
 
         $data->timemodified = $this->apply_date_offset($data->timemodified);
 
-        // insert the kalvidres record
+        // Insert the kalvidres record.
         $newitemid = $DB->insert_record('kalvidres', $data);
-        // immediately after inserting "activity" record, call this
+        // Immediately after inserting "activity" record, call this.
         $this->apply_activity_instance($newitemid);
     }
 
+    /**
+     * Once the database tables have been fully restored, restore the files
+     */
     protected function after_execute() {
-        // Add kalvidres related files, no need to match by itemname (just internally handled context)
+        // Add kalvidres related files, no need to match by itemname (just internally handled context).
         $this->add_related_files('mod_kalvidres', 'intro', null);
     }
 }

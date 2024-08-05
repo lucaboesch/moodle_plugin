@@ -17,7 +17,7 @@
 /**
  * Atto text editor integration version file.
  *
- * @package    atto_media
+ * @package    atto_kalturamedia
  * @copyright  2013 Damyon Wiese  <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,9 +28,18 @@
 function atto_kalturamedia_strings_for_js() {
     global $PAGE;
 
-    $PAGE->requires->strings_for_js(array('popuptitle', 'embedbuttontext', 'browse_and_embed'), 'atto_kalturamedia');
+    $PAGE->requires->strings_for_js(['popuptitle', 'embedbuttontext', 'browse_and_embed'], 'atto_kalturamedia');
 }
 
+/**
+ * Get the params for the atto plugin
+ *
+ * @param string $elementid The id of the element$elementid
+ * @param stdClass $options The options for the editor
+ * @param stdClass $fpoptions The filepicker options
+ * @return array
+ * @throws dml_exception
+ */
 function atto_kalturamedia_params_for_js($elementid, $options, $fpoptions) {
     global $CFG;
     require_once($CFG->dirroot.'/local/kaltura/locallib.php');
@@ -39,9 +48,9 @@ function atto_kalturamedia_params_for_js($elementid, $options, $fpoptions) {
     if (!$context) {
         $context = context_system::instance();
     }
-    
-    return array(
+
+    return [
         'contextid' => $context->id,
-        'kafuri' => local_kaltura_get_config()->kaf_uri
-        );
+        'kafuri' => local_kaltura_get_config()->kaf_uri,
+    ];
 }

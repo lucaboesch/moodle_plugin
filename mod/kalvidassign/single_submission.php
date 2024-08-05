@@ -1,4 +1,6 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -39,13 +41,13 @@ list($cm, $course, $kalvidassignobj) = kalvidassign_validate_cmid($id);
 require_login($course->id, false, $cm);
 
 if (!confirm_sesskey()) {
-    print_error('confirmsesskeybad', 'error');
+    throw new moodle_exception('confirmsesskeybad', 'error');
 }
 
 global $CFG, $PAGE, $OUTPUT, $USER;
 
 $url = new moodle_url('/mod/kalvidassign/single_submission.php');
-$url->params(array('cmid' => $id, 'userid' => $userid));
+$url->params(['cmid' => $id, 'userid' => $userid]);
 
 $context = context_module::instance($cm->id);
 
@@ -54,24 +56,25 @@ $PAGE->set_title(format_string($kalvidassignobj->name));
 $PAGE->set_heading($course->fullname);
 $PAGE->set_context($context);
 
-$previousurl = new moodle_url('/mod/kalvidassign/grade_submissions.php', array('cmid' => $cm->id, 'tifirst' => $tifirst, 'tilast' => $tilast, 'page' => $page));
+$previousurl = new moodle_url('/mod/kalvidassign/grade_submissions.php',
+    ['cmid' => $cm->id, 'tifirst' => $tifirst, 'tilast' => $tilast, 'page' => $page]);
 $prevousurlstring = get_string('singlesubmissionheader', 'kalvidassign');
 $PAGE->navbar->add($prevousurlstring, $previousurl);
 $PAGE->requires->css('/local/kaltura/styles.css');
 
 require_capability('mod/kalvidassign:gradesubmission', $context);
 
-$event = \mod_kalvidassign\event\single_submission_page_viewed::create(array(
+$event = \mod_kalvidassign\event\single_submission_page_viewed::create([
     'objectid'  => $kalvidassignobj->id,
-    'context' => context_module::instance($cm->id)
-));
+    'context' => context_module::instance($cm->id),
+]);
 $event->trigger();
 
-// Get a single submission record
+// Get a single submission record.
 $submission = kalvidassign_get_submission($cm->instance, $userid);
 
-// Get the submission user and the time they submitted the video
-$param = array('id' => $userid);
+// Get the submission user and the time they submitted the video.
+$param = ['id' => $userid];
 $user  = $DB->get_record('user', $param);
 
 $submissionuserpic = $OUTPUT->user_picture($user);
@@ -81,11 +84,11 @@ $datestring = ' - ';
 
 $submissionuserinfo = fullname($user);
 
-// Get grading information
-$gradinginfo    = grade_get_grades($cm->course, 'mod', 'kalvidassign', $cm->instance, array($userid));
+// Get grading information.
+$gradinginfo    = grade_get_grades($cm->course, 'mod', 'kalvidassign', $cm->instance, [$userid]);
 $gradingdisabled = $gradinginfo->items[0]->grades[$userid]->locked || $gradinginfo->items[0]->grades[$userid]->overridden;
 
-// Get marking teacher information and the time the submission was marked
+// Get marking teacher information and the time the submission was marked.
 $teacher = '';
 if (!empty($submission)) {
     $datestringlate     = kalvidassign_display_lateness($submission->timemodified, $kalvidassignobj->timedue);
@@ -94,7 +97,7 @@ if (!empty($submission)) {
 
     $submissionuserinfo .= '<br />'.$submissionmodified.$datestringlate;
 
-    $param   = array('id' => $submission->teacher);
+    $param   = ['id' => $submission->teacher];
     $teacher = $DB->get_record('user', $param);
 }
 
@@ -106,7 +109,7 @@ if (!empty($teacher)) {
     $markingtreacherinfo = fullname($teacher).'<br />'.$datestring;
 }
 
-// Setup form data
+// Setup form data.
 $formdata                           = new stdClass();
 $formdata->submissionuserpic        = $submissionuserpic;
 $formdata->submissionuserinfo       = $submissionuserinfo;
@@ -120,7 +123,7 @@ $formdata->cminstance               = $kalvidassignobj;
 $formdata->submission               = $submission;
 $formdata->userid                   = $userid;
 $formdata->enableoutcomes           = $CFG->enableoutcomes;
-$formdata->submissioncomment_editor = array('text' => $submission->submissioncomment, 'format' => FORMAT_HTML);
+$formdata->submissioncomment_editor = ['text' => $submission->submissioncomment, 'format' => FORMAT_HTML];
 $formdata->tifirst                  = $tifirst;
 $formdata->tilast                   = $tilast;
 $formdata->page                     = $page;
@@ -129,32 +132,32 @@ $submissionform = new kalvidassign_singlesubmission_form(null, $formdata);
 
 if ($submissionform->is_cancelled()) {
     redirect($previousurl);
-} else if ($submitted_data = $submissionform->get_data()) {
+} else if ($submitteddata = $submissionform->get_data()) {
 
-    if (!isset($submitted_data->cancel) && isset($submitted_data->xgrade) && isset($submitted_data->submissioncomment_editor)) {
+    if (!isset($submitteddata->cancel) && isset($submitteddata->xgrade) && isset($submitteddata->submissioncomment_editor)) {
 
         // Flag used when an instructor is about to grade a user who does not have
-        // a submittion (see KALDEV-126)
+        // a submittion (see KALDEV-126).
         $updategrade = true;
 
         if ($submission) {
 
-            $submissionchanged = strcmp($submission->submissioncomment, $submitted_data->submissioncomment_editor['text']);
-            if ($submission->grade == $submitted_data->xgrade && !$submissionchanged) {
+            $submissionchanged = strcmp($submission->submissioncomment, $submitteddata->submissioncomment_editor['text']);
+            if ($submission->grade == $submitteddata->xgrade && !$submissionchanged) {
                 $updategrade = false;
             }
             if ($submissionchanged || $updategrade) {
-                $submission->grade = $submitted_data->xgrade;
-                $submission->submissioncomment = $submitted_data->submissioncomment_editor['text'];
-                $submission->format = $submitted_data->submissioncomment_editor['format'];
+                $submission->grade = $submitteddata->xgrade;
+                $submission->submissioncomment = $submitteddata->submissioncomment_editor['text'];
+                $submission->format = $submitteddata->submissioncomment_editor['format'];
                 $submission->timemarked = time();
                 $submission->teacher = $USER->id;
                 $DB->update_record('kalvidassign_submission', $submission);
             }
         } else {
 
-            // Check for unchanged values
-            if ('-1' == $submitted_data->xgrade && empty($submitted_data->submissioncomment_editor['text'])) {
+            // Check for unchanged values.
+            if ('-1' == $submitteddata->xgrade && empty($submitteddata->submissioncomment_editor['text'])) {
 
                 $updategrade = false;
             } else {
@@ -162,9 +165,9 @@ if ($submissionform->is_cancelled()) {
                 $submission = new stdClass();
                 $submission->vidassignid        = $cm->instance;
                 $submission->userid             = $userid;
-                $submission->grade              = $submitted_data->xgrade;
-                $submission->submissioncomment  = $submitted_data->submissioncomment_editor['text'];
-                $submission->format             = $submitted_data->submissioncomment_editor['format'];
+                $submission->grade              = $submitteddata->xgrade;
+                $submission->submissioncomment  = $submitteddata->submissioncomment_editor['text'];
+                $submission->format             = $submitteddata->submissioncomment_editor['format'];
                 $submission->timemarked         = time();
                 $submission->teacher            = $USER->id;
 
@@ -180,26 +183,26 @@ if ($submissionform->is_cancelled()) {
             kalvidassign_grade_item_update($kalvidassignobj, $gradeobj);
 
             // Add to log.
-            $event = \mod_kalvidassign\event\grades_updated::create(array(
+            $event = \mod_kalvidassign\event\grades_updated::create([
                         'context'   => context_module::instance($cm->id),
-            ));
+            ]);
             $event->trigger();
         }
 
-        // Handle outcome data
+        // Handle outcome data.
         if (!empty($CFG->enableoutcomes)) {
             require_once($CFG->libdir.'/gradelib.php');
 
-            $data = array();
+            $data = [];
             $gradinginfo = grade_get_grades($course->id, 'mod', 'kalvidassign', $kalvidassignobj->id, $userid);
 
             if (!empty($gradinginfo->outcomes)) {
                 foreach ($gradinginfo->outcomes as $n => $old) {
                     $name = 'outcome_'.$n;
-                    if (isset($submitted_data->{$name}[$userid]) and
-                        $old->grades[$userid]->grade != $submitted_data->{$name}[$userid]) {
+                    if (isset($submitteddata->{$name}[$userid]) &&
+                        $old->grades[$userid]->grade != $submitteddata->{$name}[$userid]) {
 
-                        $data[$n] = $submitted_data->{$name}[$userid];
+                        $data[$n] = $submitteddata->{$name}[$userid];
                     }
                 }
             }

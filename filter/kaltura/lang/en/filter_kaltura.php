@@ -23,10 +23,10 @@
  * @copyright  (C) 2014 Remote-Learner.net Inc (http://www.remote-learner.net)
  */
 
-$string['filtername'] = 'Kaltura Media';
 $string['enable'] = 'Embed Kaltura Video Links';
 $string['enable_help'] = 'Convert Kaltura video links to embed code';
+$string['filtername'] = 'Kaltura Media';
+$string['privacy:metadata'] = 'The Kaltura Media filter does not store any personal data.';
+$string['unable'] = 'Unable to convert video at this time';
 $string['uris'] = 'Alternate KAF URIs';
 $string['uris_help'] = 'Enter alternate KAF URIs to filter, one per line';
-$string['unable'] = 'Unable to convert video at this time';
-$string['privacy:metadata'] = 'The Kaltura Media filter does not store any personal data.';

@@ -1,4 +1,6 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -21,15 +23,13 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Renderable course index summary
  */
 class kalvidassign_course_index_summary implements renderable {
     /** @var array assignments A list of course module info and submission counts or statuses */
-    public $assignments = array();
-    /** @var boolean usesections Does this course format support sections? */
+    public $assignments = [];
+    /** @var bool usesections Does this course format support sections? */
     public $usesections = false;
     /** @var string courseformat The current course format name */
     public $courseformatname = '';
@@ -37,8 +37,8 @@ class kalvidassign_course_index_summary implements renderable {
     /**
      * constructor
      *
-     * @param $usesections boolean True if this course format uses sections
-     * @param $courseformatname string The id of this course format
+     * @param bool $usesections True if this course format uses sections
+     * @param string $courseformatname The id of this course format
      */
     public function __construct($usesections, $courseformatname) {
         $this->usesections = $usesections;
@@ -57,13 +57,13 @@ class kalvidassign_course_index_summary implements renderable {
      * @param string $gradeinfo The current users grade if they have been graded and it is not hidden.
      */
     public function add_assign_info($cmid, $cmname, $sectionname, $timedue, $submissioninfo, $gradeinfo) {
-        $this->assignments[] = array(
+        $this->assignments[] = [
             'cmid' => $cmid,
             'cmname' => $cmname,
             'sectionname' => $sectionname,
             'timedue' => $timedue,
             'submissioninfo' => $submissioninfo,
-            'gradeinfo' => $gradeinfo
-        );
+            'gradeinfo' => $gradeinfo,
+        ];
     }
 }

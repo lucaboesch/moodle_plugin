@@ -23,12 +23,14 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
-$capabilities = array(
-    'local/mymedia:view' => array(
+defined('MOODLE_INTERNAL') || die();
+
+$capabilities = [
+    'local/mymedia:view' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_USER,
-        'archetypes' => array(
-            'user' => CAP_ALLOW
-        )
-    ),
-);
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
+    ],
+];

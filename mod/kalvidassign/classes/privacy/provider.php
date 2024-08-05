@@ -1,4 +1,18 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace mod_kalvidassign\privacy;
 
@@ -10,14 +24,26 @@ use core_privacy\local\request\writer;
 use core_privacy\local\request\transform;
 use core_privacy\local\request\userlist;
 
-defined('MOODLE_INTERNAL') || die();
-
+/**
+ * Privacy provider implementation for mod_kalvidassign.
+ *
+ * @package    mod_kalvidassign
+ * @author     Remote-Learner.net Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  Remote Learner.net Inc http://www.remote-learner.net
+ */
 class provider implements \core_privacy\local\metadata\provider,
     \core_privacy\local\request\user_preference_provider,
     \core_privacy\local\request\core_userlist_provider,
     \core_privacy\local\request\plugin\provider {
 
-    public static function get_metadata(collection $collection) : collection {
+    /**
+     * Provides meta data that is stored about a user with mod_kalvidassign.
+     *
+     * @param  collection $collection A collection of meta data items to be added to.
+     * @return  collection Returns the collection of metadata.
+     */
+    public static function get_metadata(collection $collection): collection {
 
         $collection->add_subsystem_link('core_message', [], 'privacy:metadata:emailteachersexplanation');
 
@@ -34,7 +60,7 @@ class provider implements \core_privacy\local\metadata\provider,
                 'timemarked' => 'privacy:metadata:kalvidassign_submission:timemarked',
                 'metadata' => 'privacy:metadata:kalvidassign_submission:metadata',
                 'timecreated' => 'privacy:metadata:kalvidassign_submission:timecreated',
-                'timemodified' => 'privacy:metadata:kalvidassign_submission:timemodified'
+                'timemodified' => 'privacy:metadata:kalvidassign_submission:timemodified',
             ],
             'privacy:metadata:kalvidassign_submission'
         );
@@ -58,7 +84,7 @@ class provider implements \core_privacy\local\metadata\provider,
             'kalvidassign_filter' => get_string('privacy:metadata:kalvidassignfilter', 'mod_kalvidassign'),
             'kalvidassign_group_filter' => get_string('privacy:metadata:kalvidassigngroupfilter', 'mod_kalvidassign'),
             'kalvidassign_perpage' => get_string('privacy:metadata:kalvidassignperpage', 'mod_kalvidassign'),
-            'kalvidassign_quickgrade' => get_string('privacy:metadata:kalvidassignquickgrade', 'mod_kalvidassign')
+            'kalvidassign_quickgrade' => get_string('privacy:metadata:kalvidassignquickgrade', 'mod_kalvidassign'),
         ];
 
         foreach ($assignmentpreferences as $key => $preferencestring) {
@@ -77,7 +103,7 @@ class provider implements \core_privacy\local\metadata\provider,
      * @param   int           $userid       The user to search.
      * @return  contextlist   $contextlist  The list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         $contextlist = new \core_privacy\local\request\contextlist();
 
         $sql = "SELECT DISTINCT
@@ -94,7 +120,7 @@ class provider implements \core_privacy\local\metadata\provider,
             'modulename' => 'kalvidassign',
             'contextlevel' => CONTEXT_MODULE,
             'userid' => $userid,
-            'teacher' => $userid
+            'teacher' => $userid,
         ];
 
         $contextlist->add_from_sql($sql, $params);
@@ -117,7 +143,7 @@ class provider implements \core_privacy\local\metadata\provider,
         $params = [
             'modulename' => 'kalvidassign',
             'contextlevel' => CONTEXT_MODULE,
-            'contextid' => $context->id
+            'contextid' => $context->id,
         ];
 
         $sql = "SELECT s.userid
@@ -157,36 +183,36 @@ class provider implements \core_privacy\local\metadata\provider,
                 continue;
             }
 
-            // Cannot make use of helper::export_context_files(), need to manually export kalvidassign details
+            // Cannot make use of helper::export_context_files(), need to manually export kalvidassign details.
             $kalvidassigndata = self::get_kalvidassign_by_context($context);
 
-            // Get kalvidassign details object for output
+            // Get kalvidassign details object for output.
             $kalvidassign = self::get_kalvidassign_output($kalvidassigndata);
             writer::with_context($context)->export_data([], $kalvidassign);
 
-            // Check if the user has marked any kalvidassign's submissions to determine kalvidassign submissions to export
+            // Check if the user has marked any kalvidassign's submissions to determine kalvidassign submissions to export.
             $teacher = (self::has_marked_kalvidassign_submissions($kalvidassigndata->id, $user->id) == true) ? true : false;
 
-            // Get the kalvidassign submissions submitted by & marked by the user for an kalvidassign
+            // Get the kalvidassign submissions submitted by & marked by the user for an kalvidassign.
             $submissionsdata = self::get_kalvidassign_submissions_by_kalvidassign($kalvidassigndata->id, $user->id, $teacher);
 
             foreach ($submissionsdata as $submissiondata) {
                 // Default subcontext path to export assignment submissions submitted by the user.
                 $subcontexts = [
-                    get_string('privacy:submissionpath', 'mod_kalvidassign')
+                    get_string('privacy:submissionpath', 'mod_kalvidassign'),
                 ];
 
                 if ($teacher == true) {
                     if ($submissiondata->teacher == $user->id) {
-                        // Export kalvidassign submissions that have been marked by the user
+                        // Export kalvidassign submissions that have been marked by the user.
                         $subcontexts = [
                             get_string('privacy:markedsubmissionspath', 'mod_kalvidassign'),
-                            transform::user($submissiondata->userid)
+                            transform::user($submissiondata->userid),
                         ];
                     }
                 }
 
-                // Get kalvidassign submission details object for output
+                // Get kalvidassign submission details object for output.
                 $submission = self::get_kalvidassign_submission_output($submissiondata);
 
                 writer::with_context($context)->export_data($subcontexts, $submission);
@@ -248,14 +274,14 @@ class provider implements \core_privacy\local\metadata\provider,
             return;
         }
 
-        // Fetch the kalvidassign
+        // Fetch the kalvidassign.
         $kalvidassign = self::get_kalvidassign_by_context($context);
         $userids = $userlist->get_userids();
 
         list($inorequalsql, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
         $params['videoassignid'] = $kalvidassign->id;
 
-        // Get kalvidassign submissions ids
+        // Get kalvidassign submissions ids.
         $sql = "
             SELECT s.id
             FROM {kalvidassign_submission} s
@@ -286,7 +312,7 @@ class provider implements \core_privacy\local\metadata\provider,
         $params = [
             'contextlevel' => CONTEXT_MODULE,
             'modulename' => 'kalvidassign',
-            'userid' => $userid
+            'userid' => $userid,
         ];
 
         $sql = "SELECT s.id as id,
@@ -325,7 +351,7 @@ class provider implements \core_privacy\local\metadata\provider,
         $params = [
             'modulename' => 'kalvidassign',
             'contextmodule' => CONTEXT_MODULE,
-            'contextid' => $context->id
+            'contextid' => $context->id,
         ];
 
         $sql = "SELECT a.id,
@@ -355,7 +381,7 @@ class provider implements \core_privacy\local\metadata\provider,
             'name' => $kalvidassigndata->name,
             'intro' => $kalvidassigndata->intro,
             'grade' => $kalvidassigndata->grade,
-            'timemodified' => transform::datetime($kalvidassigndata->timemodified)
+            'timemodified' => transform::datetime($kalvidassigndata->timemodified),
         ];
 
         if ($kalvidassigndata->timeavailable != 0) {
@@ -382,7 +408,7 @@ class provider implements \core_privacy\local\metadata\provider,
 
         $params = [
             'vidassignid' => $kalvidassignid,
-            'teacher'    => $userid
+            'teacher'    => $userid,
         ];
 
         $sql = "SELECT count(s.id) as nomarked
@@ -409,7 +435,7 @@ class provider implements \core_privacy\local\metadata\provider,
 
         $params = [
             'vidassignid' => $kalvidassignid,
-            'userid' => $userid
+            'userid' => $userid,
         ];
 
         $sql = "SELECT s.id as id,
@@ -450,7 +476,7 @@ class provider implements \core_privacy\local\metadata\provider,
             'source' => $submissiondata->source,
             'grade' => $submissiondata->grade,
             'submissioncomment' => $submissiondata->submissioncomment,
-            'teacher' => transform::user($submissiondata->teacher)
+            'teacher' => transform::user($submissiondata->teacher),
         ];
 
         if ($submissiondata->timecreated != 0) {

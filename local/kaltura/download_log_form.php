@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * This file defines the download Kaltura logs form.
+ *
  * @package    local_kaltura
  * @author     Remote-Learner.net Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -37,10 +39,10 @@ class local_kaltura_download_log_form extends moodleform {
         $mform->addElement('header', 'setup', get_string('options'));
         $mform->addElement('date_selector', 'logs_start_time', get_string('download_log_range', 'local_kaltura'));
 
-        $buttonarray=array();
+        $buttonarray = [];
         $buttonarray[] =& $mform->createElement('submit', 'submitbutton', get_string('download'));
         $buttonarray[] =& $mform->createElement('submit', 'cancel', get_string('cancel'));
         $buttonarray[] =& $mform->createElement('submit', 'deletelogs', get_string('delete_logs', 'local_kaltura'));
-        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $mform->addGroup($buttonarray, 'buttonar', '', [' '], false);
     }
 }

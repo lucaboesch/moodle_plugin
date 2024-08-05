@@ -42,7 +42,7 @@ require_capability('mod/kalvidassign:gradesubmission', context_module::instance(
 
 $course = get_course($courseid);
 
-$launch = array();
+$launch = [];
 $launch['id'] = 1;
 $launch['cmid'] = $cmid;
 $launch['title'] = 'Kaltura video assignment';

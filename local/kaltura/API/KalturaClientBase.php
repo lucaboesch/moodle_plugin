@@ -1,4 +1,5 @@
 <?php
+// phpcs:ignoreFile
 // ===================================================================================================
 //                           _  __     _ _
 //                          | |/ /__ _| | |_ _  _ _ _ __ _
@@ -124,12 +125,12 @@ class KalturaClientBase
 	/**
 	 * @var array
 	 */
-	protected $clientConfiguration = array();
+	protected $clientConfiguration = [];
 
 	/**
 	 * @var array
 	 */
-	protected $requestConfiguration = array();
+	protected $requestConfiguration = [];
 
 	/**
 	 * @var boolean
@@ -144,19 +145,19 @@ class KalturaClientBase
 	/**
 	 * @var unknown_type
 	 */
-	private $callsQueue = array();
+	private $callsQueue = [];
 
 	/**
 	 * Array of all plugin services
 	 *
 	 * @var array<KalturaServiceBase>
 	 */
-	protected $pluginServices = array();
+	protected $pluginServices = [];
 
 	/**
 	* @var Array of response headers
 	*/
-	private $responseHeaders = array();
+	private $responseHeaders = [];
 
 	/**
 	 * path to save served results
@@ -209,7 +210,7 @@ class KalturaClientBase
 					if(!class_exists($pluginClass) || !in_array('IKalturaClientPlugin', class_implements($pluginClass)))
 						continue;
 
-					$plugin = call_user_func(array($pluginClass, 'get'), $this);
+					$plugin = call_user_func([$pluginClass, 'get'], $this);
 					if(!($plugin instanceof IKalturaClientPlugin))
 						continue;
 
@@ -243,8 +244,8 @@ class KalturaClientBase
 		if (count($this->callsQueue) != 1)
 			return null;
 
-		$params = array();
-		$files = array();
+		$params = [];
+		$files = [];
 		$this->log("service url: [" . $this->config->serviceUrl . "]");
 
 		// append the basic params
@@ -268,7 +269,7 @@ class KalturaClientBase
 		return $url;
 	}
 
-	public function queueServiceActionCall($service, $action, $params = array(), $files = array())
+	public function queueServiceActionCall($service, $action, $params = [], $files = [])
 	{
 		foreach($this->requestConfiguration as $param => $value)
 		{
@@ -284,7 +285,7 @@ class KalturaClientBase
 		$this->destinationPath = null;
 		$this->returnServedResult = false;
 		$this->isMultiRequest = false;
-		$this->callsQueue = array();
+		$this->callsQueue = [];
 	}
 
 	/**
@@ -308,8 +309,8 @@ class KalturaClientBase
 
 		$startTime = microtime(true);
 
-		$params = array();
-		$files = array();
+		$params = [];
+		$files = [];
 		$this->log("service url: [" . $this->config->serviceUrl . "]");
 
 		// append the basic params
@@ -433,11 +434,11 @@ class KalturaClientBase
 	/**
 	 * Sorts array recursively
 	 *
-	 * @param array $params
+	 * @param array $array
 	 * @param int $flags
 	 * @return boolean
 	 */
-	protected function ksortRecursive(&$array, $flags = null) 
+	protected function ksortRecursive(&$array, $flags = null)
 	{
 		ksort($array, $flags);
 		foreach($array as &$arr) {
@@ -446,7 +447,7 @@ class KalturaClientBase
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Sign array of parameters
 	 *
@@ -464,9 +465,10 @@ class KalturaClientBase
 	 *
 	 * @param string $url
 	 * @param parameters $params
+     * @param array $files
 	 * @return array of result and error
 	 */
-	protected function doHttpRequest($url, $params = array(), $files = array())
+	protected function doHttpRequest($url, $params = [], $files = [])
 	{
 		if (function_exists('curl_init'))
 			return $this->doCurl($url, $params, $files);
@@ -485,10 +487,10 @@ class KalturaClientBase
 	 * @param array $files
 	 * @return array of result and error
 	 */
-	private function doCurl($url, $params = array(), $files = array())
+	private function doCurl($url, $params = [], $files = [])
 	{
 		$requestHeaders = $this->config->requestHeaders;
-		
+
 		$params = $this->jsonEncode($params);
 		$this->log("curl: $url");
 		$this->log("post: $params");
@@ -496,16 +498,16 @@ class KalturaClientBase
 		{
 			$requestHeaders[] = 'Accept: application/json';
 		}
-		
-		$this->responseHeaders = array();
-		$cookies = array();
+
+		$this->responseHeaders = [];
+		$cookies = [];
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
 		if($this->config->method == self::METHOD_POST) {
 			curl_setopt($ch, CURLOPT_POST, 1);
 			if (count($files) > 0)
 			{
-				$params = array('json' => $params);
+				$params = ['json' => $params];
                 foreach ($files as $key => $file) {
                     // The usage of the @filename API for file uploading is
                     // deprecated since PHP 5.5. CURLFile must be used instead.
@@ -572,7 +574,7 @@ class KalturaClientBase
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $requestHeaders);
 
 		// Save response headers
-		curl_setopt($ch, CURLOPT_HEADERFUNCTION, array($this, 'readHeader') );
+		curl_setopt($ch, CURLOPT_HEADERFUNCTION, [$this, 'readHeader'] );
 
 		$destinationResource = null;
 		if($this->destinationPath)
@@ -592,7 +594,7 @@ class KalturaClientBase
 
 		$curlError = curl_error($ch);
 		curl_close($ch);
-		return array($result, $curlError);
+		return [$result, $curlError];
 	}
 
 	/**
@@ -600,9 +602,10 @@ class KalturaClientBase
 	 *
 	 * @param string $url
 	 * @param array $params
+     * @param array $files
 	 * @return array of result and error
 	 */
-	private function doPostRequest($url, $params = array(), $files = array())
+	private function doPostRequest($url, $params = [], $files = [])
 	{
 		if (count($files) > 0)
 			throw new KalturaClientException("Uploading files is not supported with stream context http request, please use curl.", KalturaClientException::ERROR_UPLOAD_NOT_SUPPORTED);
@@ -610,13 +613,13 @@ class KalturaClientBase
 		$formattedData = http_build_query($params , "", "&");
 		$this->log("post: $url?$formattedData");
 
-		$params = array('http' => array(
+		$params = ['http' => [
 					"method" => "POST",
 					"User-Agent: " . $this->config->userAgent . "\r\n".
 					"Accept-language: en\r\n".
 					"Content-type: application/x-www-form-urlencoded\r\n",
-					"content" => $formattedData
-		          ));
+					"content" => $formattedData,
+		          ], ];
 
 		if (isset($this->config->proxyType) && $this->config->proxyType === 'SOCKS5') {
 			throw new KalturaClientException("Cannot use SOCKS5 without curl installed.", KalturaClientException::ERROR_CONNECTION_FAILED);
@@ -644,7 +647,7 @@ class KalturaClientBase
 		if ($response === false) {
 		   throw new KalturaClientException("Problem reading data from $url, $phpErrorMsg", KalturaClientException::ERROR_READ_FAILED);
 		}
-		return array($response, '');
+		return [$response, ''];
 	}
 
 	/**
@@ -758,10 +761,10 @@ class KalturaClientBase
 
 		if(is_object($paramValue) && $paramValue instanceof KalturaObjectBase)
 		{
-			$params[$paramName] = array(
-				'objectType' => get_class($paramValue)
-			);
-			
+			$params[$paramName] = [
+				'objectType' => get_class($paramValue),
+			];
+
 		    foreach($paramValue as $prop => $val)
 				$this->addParam($params[$paramName], $prop, $val);
 
@@ -780,7 +783,7 @@ class KalturaClientBase
 			return;
 		}
 
-		$params[$paramName] = array();
+		$params[$paramName] = [];
 		if ($paramValue)
 		{
 			foreach($paramValue as $subParamName => $subParamValue)
@@ -805,7 +808,7 @@ class KalturaClientBase
 				$item = $this->jsObjectToClientObject($item);
 			}
 		}
-		
+
 		if(is_object($value))
 		{
 			if(isset($value->message) && isset($value->code))
@@ -820,12 +823,12 @@ class KalturaClientBase
 				}
 				throw new KalturaException($value->message, $value->code, $value->args);
 			}
-			
+
 			if(!isset($value->objectType))
 			{
 				throw new KalturaClientException("Response format not supported - objectType is required for all objects", KalturaClientException::ERROR_FORMAT_NOT_SUPPORTED);
 			}
-			
+
 			$objectType = $value->objectType;
 			$object = new $objectType();
 			$attributes = get_object_vars($value);
@@ -835,13 +838,13 @@ class KalturaClientBase
 				{
 					continue;
 				}
-				
+
 				$object->$attribute = $this->jsObjectToClientObject($attributeValue);
 			}
-			
+
 			$value = $object;
 		}
-		
+
 		return $value;
 	}
 
@@ -859,10 +862,10 @@ class KalturaClientBase
 	{
 		if(!is_array($object) && !is_object($object))
 			return $object;
-		
+
 		if(is_object($object) && $object instanceof MultiRequestSubResult)
 			return "$object";
-		
+
 		$array = (array) $object;
 		foreach($array as $key => $value)
 		{
@@ -878,7 +881,7 @@ class KalturaClientBase
 
 		if(is_object($object))
 			$array['objectType'] = get_class($object);
-			
+
 		return $array;
 	}
 
@@ -913,9 +916,9 @@ class KalturaClientBase
 	 */
 	public function validateObjectType($resultObject, $objectType)
 	{
-		$knownNativeTypes = array("boolean", "integer", "double", "string");
+		$knownNativeTypes = ["boolean", "integer", "double", "string"];
 		if (is_null($resultObject) ||
-			( in_array(gettype($resultObject) ,$knownNativeTypes) &&
+			( in_array(gettype($resultObject) , $knownNativeTypes) &&
 			  in_array($objectType, $knownNativeTypes) ) )
 		{
 			return;// we do not check native simple types
@@ -980,12 +983,12 @@ class KalturaClientBase
 	/**
 	 * Return a list of parameter used to a new start debug on the destination server api
 	 * @link http://kb.zend.com/index.php?View=entry&EntryID=434
-	 * @param $url
+	 * @param string $url
 	 */
 	protected function getZendDebuggerParams($url)
 	{
-		$params = array();
-		$passThruParams = array('debug_host',
+		$params = [];
+		$passThruParams = ['debug_host',
 			'debug_fastfile',
 			'debug_port',
 			'start_debug',
@@ -993,7 +996,7 @@ class KalturaClientBase
 			'send_sess_end',
 			'debug_jit',
 			'debug_stop',
-			'use_remote');
+			'use_remote', ];
 
 		foreach($passThruParams as $param)
 		{
@@ -1011,15 +1014,15 @@ class KalturaClientBase
 	{
 		$rand = rand(0, 32000);
 		$expiry = time()+$expiry;
-		$fields = array (
+		$fields =  [
 			$partnerId ,
 			$partnerId ,
 			$expiry ,
 			$type,
 			$rand ,
 			$userId ,
-			$privileges
-		);
+			$privileges,
+		];
 		$info = implode ( ";" , $fields );
 
 		$signature = $this->hash ( $adminSecretForSigning , $info );
@@ -1032,7 +1035,7 @@ class KalturaClientBase
 	public static function generateSessionV2($adminSecretForSigning, $userId, $type, $partnerId, $expiry, $privileges)
 	{
 		// build fields array
-		$fields = array();
+		$fields = [];
 		foreach (explode(',', $privileges) as $privilege)
 		{
 			$privilege = trim($privilege);
@@ -1061,7 +1064,7 @@ class KalturaClientBase
 		// encrypt and encode
 		$encryptedFields = self::aesEncrypt($adminSecretForSigning, $fieldsStr);
 		$decodedKs = "v2|{$partnerId}|" . $encryptedFields;
-		return str_replace(array('+', '/'), array('-', '_'), base64_encode($decodedKs));
+		return str_replace(['+', '/'], ['-', '_'], base64_encode($decodedKs));
 	}
 
 	protected static function aesEncrypt($key, $message)
@@ -1117,6 +1120,9 @@ class KalturaClientBase
 interface IKalturaClientPlugin
 {
 	/**
+     * Get the plugin name
+     *
+     * @param KalturaClient $client
 	 * @return KalturaClientPlugin
 	 */
 	public static function get(KalturaClient $client);
@@ -1179,7 +1185,7 @@ class KalturaServiceActionCall
 	 * @param array $params
 	 * @param array $files
 	 */
-	public function __construct($service, $action, $params = array(), $files = array())
+	public function __construct($service, $action, $params = [], $files = [])
 	{
 		$this->service = $service;
 		$this->action = $action;
@@ -1194,7 +1200,7 @@ class KalturaServiceActionCall
 	 */
 	public function parseParams(array $params)
 	{
-		$newParams = array();
+		$newParams = [];
 		foreach($params as $key => $val)
 		{
 			if (is_array($val))
@@ -1216,7 +1222,7 @@ class KalturaServiceActionCall
 	 */
 	public function getParamsForMultiRequest($multiRequestIndex)
 	{
-		$multiRequestParams = array();
+		$multiRequestParams = [];
 		$multiRequestParams[$multiRequestIndex]['service'] = $this->service;
 		$multiRequestParams[$multiRequestIndex]['action'] = $this->action;
 		foreach($this->params as $key => $val)
@@ -1233,7 +1239,7 @@ class KalturaServiceActionCall
 	 */
 	public function getFilesForMultiRequest($multiRequestIndex)
 	{
-		$multiRequestParams = array();
+		$multiRequestParams = [];
 		foreach($this->files as $key => $val)
 		{
 			$multiRequestParams["$multiRequestIndex:$key"] = $val;
@@ -1297,7 +1303,7 @@ abstract class KalturaObjectBase
 	 */
 	public $relatedObjects;
 
-	public function __construct($params = array())
+	public function __construct($params = [])
 	{
 		foreach ($params as $key => $value)
 		{
@@ -1324,7 +1330,7 @@ abstract class KalturaObjectBase
 
 	public function toParams()
 	{
-		$params = array();
+		$params = [];
 		$params["objectType"] = get_class($this);
 	    foreach($this as $prop => $val)
 		{
@@ -1359,6 +1365,9 @@ class KalturaException extends Exception
 	}
 
 	/**
+     * Get argument by name
+     *
+     * @param string $argument
 	 * @return string
 	 */
 	public function getArgument($argument)
@@ -1413,7 +1422,7 @@ class KalturaConfiguration
 	public $proxyPassword               = '';
 	public $verifySSL 					= true;
 	public $sslCertificatePath			= null;
-	public $requestHeaders				= array();
+	public $requestHeaders				= [];
 	public $method						= KalturaClientBase::METHOD_POST;
 
 	/**

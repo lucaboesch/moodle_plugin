@@ -17,13 +17,13 @@
 /**
  * Strings for component 'atto_kalturamedia', language 'en'.
  *
- * @package    atto_media
+ * @package    atto_kalturamedia
  * @copyright  2013 Damyon Wiese  <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['browse_and_embed'] = 'Browse and Embed';
+$string['embedbuttontext'] = 'Embed';
 $string['pluginname'] = 'Embed Kaltura Media';
 $string['popuptitle'] = 'Select Media';
-$string['embedbuttontext'] = 'Embed';
-$string['browse_and_embed'] = 'Browse and Embed';
 $string['privacy:metadata'] = 'The atto_kalturamedia plugin does not store any personal data.';

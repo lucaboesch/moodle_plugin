@@ -1,4 +1,6 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -21,6 +23,8 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
-$messageproviders = array(
-    'kalvidassign_updates' => array()
-);
+defined('MOODLE_INTERNAL') || die();
+
+$messageproviders = [
+    'kalvidassign_updates' => [],
+];

@@ -21,16 +21,18 @@
  * @author     Remote-Learner.net Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
+ *
+ * @param int $oldversion The version we are upgrading from.
  */
 function xmldb_local_kaltura_upgrade($oldversion) {
     global $CFG, $DB;
 
-    $savePointDone = false;
+    $savepointdone = false;
     require_once($CFG->dirroot.'/local/kaltura/locallib.php');
 
     $dbman = $DB->get_manager();
 
-    // plugin in any version below this is 3.x and requires migration
+    // Plugin in any version below this is 3.x and requires migration.
     if ($oldversion < 2014023000) {
         // Because the plug-in is being upgraded we need to set the migration flag to true.
         set_config('migration_yes', 1, KALTURA_PLUGIN_NAME);
@@ -47,11 +49,11 @@ function xmldb_local_kaltura_upgrade($oldversion) {
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0');
 
         // Adding keys to table local_kaltura_log.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Adding indexes to table local_kaltura_log.
-        $table->add_index('module_idx', XMLDB_INDEX_NOTUNIQUE, array('module'));
-        $table->add_index('timecreated_idx', XMLDB_INDEX_NOTUNIQUE, array('timecreated'));
+        $table->add_index('module_idx', XMLDB_INDEX_NOTUNIQUE, ['module']);
+        $table->add_index('timecreated_idx', XMLDB_INDEX_NOTUNIQUE, ['timecreated']);
 
         // Conditionally launch create table for local_kaltura_log.
         if (!$dbman->table_exists($table)) {
@@ -60,14 +62,14 @@ function xmldb_local_kaltura_upgrade($oldversion) {
 
         // Kaltura savepoint reached.
         upgrade_plugin_savepoint(true, 2016120130, 'local', 'kaltura');
-        $savePointDone = true;
+        $savepointdone = true;
     }
 
-    if (!$savePointDone && $oldversion < 2016120130) {
-        if($dbman->table_exists('local_kaltura_log') && $dbman->field_exists('local_kaltura_log', 'endpoint')) {
+    if (!$savepointdone && $oldversion < 2016120130) {
+        if ($dbman->table_exists('local_kaltura_log') && $dbman->field_exists('local_kaltura_log', 'endpoint')) {
             $table = new xmldb_table('local_kaltura_log');
-            $updatedFieldSchema = new xmldb_field('endpoint', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, null);
-            $dbman->change_field_type($table, $updatedFieldSchema);
+            $updatedfieldschema = new xmldb_field('endpoint', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, null);
+            $dbman->change_field_type($table, $updatedfieldschema);
         }
 
         // Kaltura savepoint reached.

@@ -1,4 +1,6 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -21,12 +23,13 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');
-}
+defined('MOODLE_INTERNAL') || die();
 
 require_once(dirname(dirname(dirname(__FILE__))).'/local/kaltura/locallib.php');
 
+/**
+ * The renderer class for the Kaltura video resource module.
+ */
 class mod_kalvidres_renderer extends plugin_renderer_base {
     /**
      * This function displays the title of the video in bold.
@@ -36,7 +39,7 @@ class mod_kalvidres_renderer extends plugin_renderer_base {
     public function display_mod_info($title) {
         $output = '';
 
-        $attr = array('for' => 'video_name');
+        $attr = ['for' => 'video_name'];
         $output .= html_writer::start_tag('b');
         $output .= html_writer::tag('div', $title);
         $output .= html_writer::end_tag('b');
@@ -52,16 +55,16 @@ class mod_kalvidres_renderer extends plugin_renderer_base {
      * @return string HTML markup.
      */
     public function display_iframe($kalvidres, $courseid) {
-        $params = array(
+        $params = [
             'courseid' => $courseid,
             'height' => $kalvidres->height,
             'width' => $kalvidres->width,
             'withblocks' => 0,
-            'source' => $kalvidres->source
-        );
+            'source' => $kalvidres->source,
+        ];
         $url = new moodle_url('/mod/kalvidres/lti_launch.php', $params);
 
-        $attr = array(
+        $attr = [
             'id' => 'contentframe',
             'class' => 'kaltura-player-iframe',
             'height' => '100%',
@@ -69,13 +72,13 @@ class mod_kalvidres_renderer extends plugin_renderer_base {
             'src' => $url->out(false),
             'allowfullscreen' => 'true',
             'allow' => 'autoplay *; fullscreen *; encrypted-media *; camera *; microphone *; display-capture *;',
-        );
+        ];
 
         $iframe = html_writer::tag('iframe', '', $attr);
-        $iframeContainer = html_writer::tag('div', $iframe, array(
-            'class' => 'kaltura-player-container'
-        ));
+        $iframecontainer = html_writer::tag('div', $iframe, [
+            'class' => 'kaltura-player-container',
+        ]);
 
-        return $iframeContainer;
+        return $iframecontainer;
     }
 }

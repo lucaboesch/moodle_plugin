@@ -1,4 +1,6 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -17,13 +19,11 @@
  *
  * @package    local_kaltura
  * @author     Remote-Learner.net Inc
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');
-}
+defined('MOODLE_INTERNAL') || die();
 
 $plugin->version = 2024042201;
 $plugin->component = 'local_kaltura';
@@ -34,29 +34,34 @@ $plugin->maturity = MATURITY_STABLE;
 try {
     global $DB;
 
-    $localKalturaPluginVersionRecord = $DB->get_records_select('config_plugins', "plugin = 'local_kaltura' AND name = 'version'");
+    $localkalturapluginversionrecord = $DB->get_records_select('config_plugins', "plugin = 'local_kaltura' AND name = 'version'");
 
-    $kalturaPluginVersion = "";
-    if ($localKalturaPluginVersionRecord) {
-        $localKalturaPluginVersionRecordValue = array_pop($localKalturaPluginVersionRecord);
-        $kalturaPluginVersion = $localKalturaPluginVersionRecordValue->value;
+    $kalturapluginversion = "";
+    if ($localkalturapluginversionrecord) {
+        $localkalturapluginversionrecordvalue = array_pop($localkalturapluginversionrecord);
+        $kalturapluginversion = $localkalturapluginversionrecordvalue->value;
     }
 
-    $updatedVersion = null;
-    if ($kalturaPluginVersion == 20210620311) {
-        $updatedVersion = 2021051700;
-    } else if ($kalturaPluginVersion == 20201215310 || $kalturaPluginVersion == 20210620310) {
-        $updatedVersion = 2020110900;
-    } else if ($kalturaPluginVersion == 2020070539 || $kalturaPluginVersion == 2020121539 || $kalturaPluginVersion == 2021062039) {
-        $updatedVersion = 2020061500;
+    $updatedversion = null;
+    if ($kalturapluginversion == 20210620311) {
+        $updatedversion = 2021051700;
+    } else if ($kalturapluginversion == 20201215310 || $kalturapluginversion == 20210620310) {
+        $updatedversion = 2020110900;
+    } else if ($kalturapluginversion == 2020070539 || $kalturapluginversion == 2020121539 || $kalturapluginversion == 2021062039) {
+        $updatedversion = 2020061500;
     }
 
-    if (!empty($updatedVersion)) {
-        $pluginsRecords = $DB->get_records_select('config_plugins', "plugin in ('local_kaltura', 'local_kalturamediagallery', 'local_mymedia', 'atto_kalturamedia','block_kalturamediagallery','filter_kaltura','tinymce_kalturamedia','mod_kalvidassign','mod_kalvidres', 'tiny_kalturamedia') AND name = 'version' AND value = '$kalturaPluginVersion'");
+    if (!empty($updatedversion)) {
+        $pluginsrecords = $DB->get_records_select('config_plugins', "plugin in ('local_kaltura',
+        'local_kalturamediagallery', 'local_mymedia', 'atto_kalturamedia','block_kalturamediagallery','filter_kaltura',
+        'tinymce_kalturamedia','mod_kalvidassign','mod_kalvidres', 'tiny_kalturamedia')
+        AND name = 'version' AND value = '$kalturapluginversion'");
 
-        foreach ($pluginsRecords as $record) {
-            $record->value = $updatedVersion;
+        foreach ($pluginsrecords as $record) {
+            $record->value = $updatedversion;
             $DB->update_record('config_plugins', $record);
         }
     }
-} catch (Exception $e) {}
+} catch (Exception $e) {
+    return;
+}

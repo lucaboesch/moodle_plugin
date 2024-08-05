@@ -24,9 +24,7 @@
  */
 
 // It must be included from a Moodle page.
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');
-}
+defined('MOODLE_INTERNAL') || die();
 
 use mod_lti\local\ltiopenid\registration_helper;
 
@@ -50,7 +48,7 @@ if ($hassiteconfig) {
             $message = get_string('invalid_url', 'local_kaltura');
         } else {
             $message = $url.'/admin';
-            $message = html_writer::tag('a', $message, array('href' => $message));
+            $message = html_writer::tag('a', $message, ['href' => $message]);
             $message = html_writer::tag('center', $message);
         }
     }
@@ -62,69 +60,79 @@ if ($hassiteconfig) {
 
     // Pull the Kaltura repository settings (if exists).
     $kalrepoconfig = get_config(KALTURA_REPO_NAME);
-    $repoprofileid = (!empty($kalrepoconfig) && !empty($kalrepoconfig->metadata_profile_id)) ? $kalrepoconfig->metadata_profile_id : '';
+    $repoprofileid = (!empty($kalrepoconfig) && !empty($kalrepoconfig->metadata_profile_id)) ?
+        $kalrepoconfig->metadata_profile_id : '';
 
     $adminsetting = new admin_setting_heading('kaf_url_heading', get_string('kaf_configuration_hdr', 'local_kaltura'), $message);
     $adminsetting->plugin = KALTURA_PLUGIN_NAME;
     $settings->add($adminsetting);
 
-    $adminsetting = new admin_setting_configtext('kaf_uri', get_string('kaf_uri', 'local_kaltura'), get_string('kaf_uri_desc', 'local_kaltura'), '', PARAM_URL);
+    $adminsetting = new admin_setting_configtext('kaf_uri', get_string('kaf_uri', 'local_kaltura'),
+        get_string('kaf_uri_desc', 'local_kaltura'), '', PARAM_URL);
     $adminsetting->plugin = KALTURA_PLUGIN_NAME;
     $settings->add($adminsetting);
 
-    $adminsetting = new admin_setting_configtext('uri', get_string('server_uri', 'local_kaltura'), get_string('server_uri_desc', 'local_kaltura'), KALTURA_DEFAULT_URI, PARAM_URL);
+    $adminsetting = new admin_setting_configtext('uri', get_string('server_uri', 'local_kaltura'),
+        get_string('server_uri_desc', 'local_kaltura'), KALTURA_DEFAULT_URI, PARAM_URL);
     $adminsetting->plugin = KALTURA_PLUGIN_NAME;
     $settings->add($adminsetting);
 
-	$setting = new admin_setting_configselect(
-		'lti_version',
-		get_string('lti_version', KALTURA_PLUGIN_NAME),
-		get_string('lti_version_desc', KALTURA_PLUGIN_NAME),
-		LTI_VERSION_1,
-		array(
-			LTI_VERSION_1 => get_string('oauthsecurity', 'lti'),
-			LTI_VERSION_1P3 => get_string('jwtsecurity', 'lti'),
-		)
-	);
-	$setting->plugin = KALTURA_PLUGIN_NAME;
-	$settings->add($setting);
+    $setting = new admin_setting_configselect(
+        'lti_version',
+        get_string('lti_version', KALTURA_PLUGIN_NAME),
+        get_string('lti_version_desc', KALTURA_PLUGIN_NAME),
+        LTI_VERSION_1,
+        [
+            LTI_VERSION_1 => get_string('oauthsecurity', 'lti'),
+            LTI_VERSION_1P3 => get_string('jwtsecurity', 'lti'),
+        ]
+    );
+    $setting->plugin = KALTURA_PLUGIN_NAME;
+    $settings->add($setting);
 
-	$adminsetting = new admin_setting_configtext('partner_id', get_string('partner_id', 'local_kaltura'), get_string('partner_id_desc', 'local_kaltura'), '', PARAM_INT);
-	$adminsetting->plugin = KALTURA_PLUGIN_NAME;
-	$settings->add($adminsetting);
+    $adminsetting = new admin_setting_configtext('partner_id', get_string('partner_id', 'local_kaltura'),
+        get_string('partner_id_desc', 'local_kaltura'), '', PARAM_INT);
+    $adminsetting->plugin = KALTURA_PLUGIN_NAME;
+    $settings->add($adminsetting);
 
-    $adminsetting = new admin_setting_configtext('adminsecret', get_string('admin_secret', 'local_kaltura'), get_string('admin_secret_desc', 'local_kaltura'), '', PARAM_ALPHANUM);
+    $adminsetting = new admin_setting_configtext('adminsecret', get_string('admin_secret', 'local_kaltura'),
+        get_string('admin_secret_desc', 'local_kaltura'), '', PARAM_ALPHANUM);
     $adminsetting->plugin = KALTURA_PLUGIN_NAME;
     $settings->add($adminsetting);
 
 
-	if(!$clientid = get_config(KALTURA_PLUGIN_NAME,'client_id')){
+    if (!$clientid = get_config(KALTURA_PLUGIN_NAME, 'client_id')) {
 
-		$clientid = random_string(15);
+        $clientid = random_string(15);
 
-		set_config('client_id', $clientid, KALTURA_PLUGIN_NAME);
-	}
+        set_config('client_id', $clientid, KALTURA_PLUGIN_NAME);
+    }
 
-	$adminsetting = new admin_setting_description('client_id', 'Client ID', '<input type="text" class="form-control" size="30" value="'.$clientid.'" disabled/><p>Should be used in the KAF hosted module</p>');
-	$adminsetting->plugin = KALTURA_PLUGIN_NAME;
-	$settings->add($adminsetting);
+    $adminsetting = new admin_setting_description('client_id', 'Client ID',
+        '<input type="text" class="form-control" size="30" value="'.$clientid.
+        '" disabled/><p>Should be used in the KAF hosted module</p>');
+    $adminsetting->plugin = KALTURA_PLUGIN_NAME;
+    $settings->add($adminsetting);
 
     $url = new moodle_url('/local/kaltura/download_log.php');
-    $adminsetting = new admin_setting_configcheckbox('enable_logging', get_string('trace_log', 'local_kaltura'), get_string('trace_log_desc', 'local_kaltura', $url->out()), 0);
+    $adminsetting = new admin_setting_configcheckbox('enable_logging', get_string('trace_log', 'local_kaltura'),
+        get_string('trace_log_desc', 'local_kaltura', $url->out()), 0);
     $adminsetting->plugin = KALTURA_PLUGIN_NAME;
     $settings->add($adminsetting);
 
-    $adminsetting = new admin_setting_configcheckbox('enable_submission', get_string('enable_submission', 'local_kaltura'), get_string('enable_submission_desc', 'local_kaltura'), 0);
+    $adminsetting = new admin_setting_configcheckbox('enable_submission', get_string('enable_submission', 'local_kaltura'),
+        get_string('enable_submission_desc', 'local_kaltura'), 0);
     $adminsetting->plugin = KALTURA_PLUGIN_NAME;
     $settings->add($adminsetting);
 
-	$settings->hide_if(KALTURA_PLUGIN_NAME.'/adminsecret', KALTURA_PLUGIN_NAME .'/lti_version', 'eq', LTI_VERSION_1P3);
-	$settings->hide_if(KALTURA_PLUGIN_NAME.'/client_id', KALTURA_PLUGIN_NAME. '/lti_version', 'eq', LTI_VERSION_1);
+    $settings->hide_if(KALTURA_PLUGIN_NAME.'/adminsecret', KALTURA_PLUGIN_NAME .'/lti_version', 'eq', LTI_VERSION_1P3);
+    $settings->hide_if(KALTURA_PLUGIN_NAME.'/client_id', KALTURA_PLUGIN_NAME. '/lti_version', 'eq', LTI_VERSION_1);
 
     if (isset($configsettings->migration_yes) && $configsettings->migration_yes == 1) {
         $url = new moodle_url('/local/kaltura/migration.php');
 
-        $adminsetting = new admin_setting_heading('migration_url_heading', get_string('migration_notice', 'local_kaltura', $url->out()), '');
+        $adminsetting = new admin_setting_heading('migration_url_heading', get_string('migration_notice',
+            'local_kaltura', $url->out()), '');
         $adminsetting->plugin = KALTURA_PLUGIN_NAME;
         $settings->add($adminsetting);
     }

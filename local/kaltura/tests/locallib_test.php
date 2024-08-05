@@ -23,6 +23,8 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
+namespace local_kaltura;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -30,17 +32,18 @@ require_once($CFG->dirroot.'/local/kaltura/locallib.php');
 require_once($CFG->dirroot.'/local/kaltura/API/KalturaTypes.php');
 
 /**
+ * Tests for local_kaltura locallib.php.
+ *
  * @group local_kaltura
  */
-class local_kaltura_locallib_testcase extends advanced_testcase {
+final class locallib_test extends advanced_testcase {
     /**
      * A Dataprovider method, providing invalid data.
      */
-    public function mymedia_test_required_param_fail() {
-        $data = array(
-                array(
-                        array(
-                            // 'id' => 1,
+    public static function mymedia_test_required_param_fail(): array {
+        $data = [
+                [
+                        [
                             'title' => 'title',
                             'width' => 100,
                             'height' => 100,
@@ -48,82 +51,76 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
                             'course' => new stdClass(),
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
-                            // 'title' => 'title',
                             'width' => 100,
                             'height' => 100,
                             'module' => KAF_MYMEDIA_MODULE,
                             'course' => new stdClass(),
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
-                            // 'width' => 100,
                             'height' => 100,
                             'module' => KAF_MYMEDIA_MODULE,
                             'course' => new stdClass(),
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        ),
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
                             'width' => 100,
-                            // 'height' => 100,
                             'module' => KAF_MYMEDIA_MODULE,
                             'course' => new stdClass(),
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
                             'width' => 100,
                             'height' => 100,
-                            // 'module' => '',
                             'course' => new stdClass(),
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
                             'width' => 100,
                             'height' => 100,
                             'module' => KAF_MYMEDIA_MODULE,
-                            // 'course' => new stdClass(),
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
                             'width' => 100,
                             'height' => 100,
                             'module' => KAF_MYMEDIA_MODULE,
                             'course' => new stdClass(),
-                            // 'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
                             'width' => 100,
@@ -131,11 +128,10 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
                             'module' => KAF_MYMEDIA_MODULE,
                             'course' => new stdClass(),
                             'cmid' => 0,
-                            // 'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             // Non-numeric.
                             'id' => 'string',
                             'title' => 'title',
@@ -145,10 +141,10 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
                             'course' => new stdClass(),
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
                             // Non-numeric.
@@ -158,10 +154,10 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
                             'course' => new stdClass(),
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
                             'width' => 100,
@@ -171,10 +167,10 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
                             'course' => new stdClass(),
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
                             'width' => 100,
@@ -184,10 +180,10 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
                             'course' => 'string',
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
                             'width' => 100,
@@ -197,18 +193,20 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
                             // Non-numeric.
                             'cmid' => 'string',
                             'custom_publishdata' => '',
-                        )
-                ),
-        );
+                        ],
+                ],
+        ];
         return $data;
     }
 
     /**
      * This function tests whether the parameters contain all required fields.
+     *
+     * @covers \local_kaltura_validate_mymedia_required_params
      * @param array $data An array of parameters that are invalid.
      * @dataProvider mymedia_test_required_param_fail
      */
-    public function test_local_kaltura_validate_mymedia_required_params_fail($data) {
+    public function test_local_kaltura_validate_mymedia_required_params_fail($data): void {
         $this->resetAfterTest(true);
         $result = local_kaltura_validate_mymedia_required_params($data);
         $this->assertFalse($result);
@@ -217,11 +215,10 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
     /**
      * A Dataprovider method, providing invalid data.
      */
-    public function mediagallery_test_required_param_fail() {
-        $data = array(
-                array(
-                        array(
-                            // 'id' => 1,
+    public static function mediagallery_test_required_param_fail(): array {
+        $data = [
+                [
+                        [
                             'title' => 'title',
                             'width' => 100,
                             'height' => 100,
@@ -229,82 +226,76 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
                             'course' => new stdClass(),
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
-                            // 'title' => 'title',
                             'width' => 100,
                             'height' => 100,
                             'module' => KAF_MEDIAGALLERY_MODULE,
                             'course' => new stdClass(),
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
-                            // 'width' => 100,
                             'height' => 100,
                             'module' => KAF_MEDIAGALLERY_MODULE,
                             'course' => new stdClass(),
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        ),
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
                             'width' => 100,
-                            // 'height' => 100,
                             'module' => KAF_MEDIAGALLERY_MODULE,
                             'course' => new stdClass(),
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
                             'width' => 100,
                             'height' => 100,
-                            // 'module' => '',
                             'course' => new stdClass(),
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
                             'width' => 100,
                             'height' => 100,
                             'module' => KAF_MEDIAGALLERY_MODULE,
-                            // 'course' => new stdClass(),
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
                             'width' => 100,
                             'height' => 100,
                             'module' => KAF_MEDIAGALLERY_MODULE,
                             'course' => new stdClass(),
-                            // 'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
                             'width' => 100,
@@ -312,11 +303,10 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
                             'module' => KAF_MEDIAGALLERY_MODULE,
                             'course' => new stdClass(),
                             'cmid' => 0,
-                            // 'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             // Non-numeric.
                             'id' => 'string',
                             'title' => 'title',
@@ -326,10 +316,10 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
                             'course' => new stdClass(),
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
                             // Non-numeric.
@@ -339,10 +329,10 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
                             'course' => new stdClass(),
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
                             'width' => 100,
@@ -352,10 +342,10 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
                             'course' => new stdClass(),
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
                             'width' => 100,
@@ -365,10 +355,10 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
                             'course' => 'string',
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
                             'width' => 100,
@@ -378,18 +368,20 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
                             // Non-numeric.
                             'cmid' => 'string',
                             'custom_publishdata' => '',
-                        )
-                ),
-        );
+                        ],
+                ],
+        ];
         return $data;
     }
 
     /**
      * This function tests whether the parameters contain all required fields.
+     *
+     * @covers \local_kaltura_validate_mediagallery_required_params
      * @param array $data An array of parameters that are invalid.
      * @dataProvider mediagallery_test_required_param_fail
      */
-    public function test_local_kaltura_validate_coursegallery_required_params_fail($data) {
+    public function test_local_kaltura_validate_coursegallery_required_params_fail($data): void {
         $this->resetAfterTest(true);
         $result = local_kaltura_validate_mediagallery_required_params($data);
         $this->assertFalse($result);
@@ -397,10 +389,12 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
 
     /**
      * This function tests whether the parameters contain all required fields.
+     *
+     * @covers \local_kaltura_validate_mediagallery_required_params
      */
-    public function test_local_kaltura_validate_coursegallery_required_params() {
+    public function test_local_kaltura_validate_coursegallery_required_params(): void {
         $this->resetAfterTest(true);
-        $data = array(
+        $data = [
             'id' => 1,
             'title' => 'title',
             'width' => 100,
@@ -408,8 +402,8 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
             'module' => KAF_MEDIAGALLERY_MODULE,
             'course' => new stdClass(),
             'cmid' => 0,
-            'custom_publishdata' => ''
-        );
+            'custom_publishdata' => '',
+        ];
 
         $result = local_kaltura_validate_mediagallery_required_params($data);
         $this->assertTrue($result);
@@ -418,11 +412,10 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
     /**
      * A Dataprovider method, providing invalid data.
      */
-    public function browseembed_test_required_param_fail() {
-        $data = array(
-                array(
-                        array(
-                            // 'id' => 1,
+    public static function browseembed_test_required_param_fail(): array {
+        $data = [
+                [
+                        [
                             'title' => 'title',
                             'width' => 100,
                             'height' => 100,
@@ -430,82 +423,76 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
                             'course' => new stdClass(),
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
-                            // 'title' => 'title',
                             'width' => 100,
                             'height' => 100,
                             'module' => KAF_BROWSE_EMBED_MODULE,
                             'course' => new stdClass(),
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
-                            // 'width' => 100,
                             'height' => 100,
                             'module' => KAF_BROWSE_EMBED_MODULE,
                             'course' => new stdClass(),
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        ),
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
                             'width' => 100,
-                            // 'height' => 100,
                             'module' => KAF_BROWSE_EMBED_MODULE,
                             'course' => new stdClass(),
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
                             'width' => 100,
                             'height' => 100,
-                            // 'module' => '',
                             'course' => new stdClass(),
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
                             'width' => 100,
                             'height' => 100,
                             'module' => KAF_BROWSE_EMBED_MODULE,
-                            // 'course' => new stdClass(),
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
                             'width' => 100,
                             'height' => 100,
                             'module' => KAF_BROWSE_EMBED_MODULE,
                             'course' => new stdClass(),
-                            // 'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
                             'width' => 100,
@@ -513,11 +500,10 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
                             'module' => KAF_BROWSE_EMBED_MODULE,
                             'course' => new stdClass(),
                             'cmid' => 0,
-                            // 'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             // Non-numeric.
                             'id' => 'string',
                             'title' => 'title',
@@ -527,10 +513,10 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
                             'course' => new stdClass(),
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
                             // Non-numeric.
@@ -540,10 +526,10 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
                             'course' => new stdClass(),
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
                             'width' => 100,
@@ -553,10 +539,10 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
                             'course' => new stdClass(),
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
                             'width' => 100,
@@ -566,10 +552,10 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
                             'course' => 'string',
                             'cmid' => 0,
                             'custom_publishdata' => '',
-                        )
-                ),
-                array(
-                        array(
+                        ],
+                ],
+                [
+                        [
                             'id' => 1,
                             'title' => 'title',
                             'width' => 100,
@@ -579,27 +565,31 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
                             // Non-numeric.
                             'cmid' => 'string',
                             'custom_publishdata' => '',
-                        )
-                ),
-        );
+                        ],
+                ],
+        ];
         return $data;
     }
 
     /**
      * This function tests whether the parameters contain all required fields.
+     *
+     * @covers \local_kaltura_validate_browseembed_required_params
      * @param array $data An array of parameters that are invalid.
      * @dataProvider browseembed_test_required_param_fail
      */
-    public function test_local_kaltura_validate_browseembed_required_params_fail($data) {
+    public function test_local_kaltura_validate_browseembed_required_params_fail($data): void {
         $result = local_kaltura_validate_browseembed_required_params($data);
         $this->assertFalse($result);
     }
 
     /**
      * This function tests whether the parameters contain all required fields.
+     *
+     * @covers \local_kaltura_validate_browseembed_required_params
      */
-    public function test_local_kaltura_validate_browseembed_required_params() {
-        $data = array(
+    public function test_local_kaltura_validate_browseembed_required_params(): void {
+        $data = [
             'id' => 1,
             'title' => 'title',
             'width' => 100,
@@ -607,45 +597,49 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
             'module' => KAF_BROWSE_EMBED_MODULE,
             'course' => new stdClass(),
             'cmid' => 0,
-            'custom_publishdata' => ''
-        );
+            'custom_publishdata' => '',
+        ];
 
         $result = local_kaltura_validate_browseembed_required_params($data);
         $this->assertTrue($result);
     }
 
     /**
-     * This function tests the return values for @see local_kaltura_get_lti_launch_container().
+     * This function tests the return values for {@see local_kaltura_get_lti_launch_container()}.
+     *
+     * @covers \local_kaltura_get_lti_launch_container
      */
-    public function test_local_kaltura_get_lti_launch_container() {
+    public static function test_local_kaltura_get_lti_launch_container(): void {
         global $CFG;
 
-        $this->resetAfterTest(true);
+        self::resetAfterTest(true);
         $result = local_kaltura_get_lti_launch_container(true);
-        $this->assertEquals(LTI_LAUNCH_CONTAINER_EMBED, $result);
+        self::assertEquals(LTI_LAUNCH_CONTAINER_EMBED, $result);
 
         $result = local_kaltura_get_lti_launch_container(false);
-        $this->assertEquals(LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS, $result);
+        self::assertEquals(LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS, $result);
     }
 
     /**
      * Data provider for different KAF service names.
      */
-    public function module_name_test_fail() {
-        $data = array(
-                array('nothing'),
-                array(''),
-                array(1234)
-        );
+    public static function module_name_test_fail(): array {
+        $data = [
+                ['nothing'],
+                [''],
+                [1234],
+        ];
         return $data;
     }
 
     /**
      * Test validating available KAF services.
+     *
+     * @covers \local_kaltura_validate_kaf_module_request
      * @param array $data An array of parameters that are invalid.
      * @dataProvider module_name_test_fail
      */
-    public function test_local_kaltura_validate_kaf_module_request_fail($data) {
+    public function test_local_kaltura_validate_kaf_module_request_fail($data): void {
         $this->resetAfterTest(true);
         $result = local_kaltura_validate_kaf_module_request($data);
         $this->assertFalse($result);
@@ -654,20 +648,22 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
     /**
      * Data provider for different KAF service names.
      */
-    public function module_name_test() {
-        $data = array(
-                array('mymedia'),
-                array('coursegallery'),
-        );
+    public static function module_name_test(): array {
+        $data = [
+                ['mymedia'],
+                ['coursegallery'],
+        ];
         return $data;
     }
 
     /**
      * Test validating available KAF services.
+     *
+     * @covers \local_kaltura_validate_kaf_module_request
      * @param array $data An array of parameters that is valid.
      * @dataProvider module_name_test
      */
-    public function test_local_kaltura_validate_kaf_module_request($data) {
+    public function test_local_kaltura_validate_kaf_module_request($data): void {
         $this->resetAfterTest(true);
         $result = local_kaltura_validate_kaf_module_request($data);
         $this->assertTrue($result);
@@ -675,8 +671,10 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
 
     /**
      * Test that the correct end point is returned.
+     *
+     * @covers \local_kaltura_get_endpoint
      */
-    public function test_local_kaltura_get_endpoint() {
+    public function test_local_kaltura_get_endpoint(): void {
         $this->resetAfterTest(true);
         $result = local_kaltura_get_endpoint(KAF_MYMEDIA_MODULE);
         $this->assertEquals(KAF_MYMEDIA_ENDPOINT, $result);
@@ -688,8 +686,10 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
 
     /**
      * This functions tests properties of the mod_lti object returned by local_kaltura_format_lti_instance_object().
+     *
+     * @covers \local_kaltura_format_lti_instance_object
      */
-    public function test_local_kaltura_format_lti_instance_object() {
+    public function test_local_kaltura_format_lti_instance_object(): void {
         $this->resetAfterTest(true);
 
         set_config('partner_id', 12345, 'local_kaltura');
@@ -701,7 +701,7 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
 
         $course = new stdClass();
         $course->id = 1;
-        $param = array(
+        $param = [
             'id' => 1,
             'module' => 'mymedia',
             'course' => $course,
@@ -710,7 +710,7 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
             'height' => 100,
             'cmid' => 0,
             'intro' => 'phpunitintro',
-        );
+        ];
 
         $expected = new stdClass();
 
@@ -750,8 +750,10 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
 
     /**
      * Test the formatting of an array to be used by mod_lti.
+     *
+     * @covers \local_kaltura_format_lti_instance_object
      */
-    public function test_local_kaltura_format_typeconfig() {
+    public function test_local_kaltura_format_typeconfig(): void {
         $this->resetAfterTest(true);
 
         $param = new stdClass();
@@ -761,14 +763,14 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
         $param->instructorchoiceacceptgrades = 0;
         $param->instructorchoiceallowroster = 3;
 
-        $expected = array(
+        $expected = [
             'sendname' => 0,
             'sendemailaddr' => 'a@a.com',
             'customparameters' => '',
             'acceptgrades' => 0,
             'allowroster' => 3,
             'launchcontainer' => 2,
-        );
+        ];
 
         $result = local_kaltura_format_typeconfig($param);
 
@@ -776,7 +778,7 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
         ksort($expected);
         $this->assertEquals($expected, $result);
 
-        // call function specifying no blocks to be displayed
+        // Call function specifying no blocks to be displayed.
         $expected['launchcontainer'] = 3;
         $result = local_kaltura_format_typeconfig($param, false);
         $this->assertEquals($expected, $result);
@@ -786,26 +788,28 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
      * Data provider for different KAF service names.
      */
     public function invalid_logging_data() {
-        $data = array(
-                array(
-                        'string'
-                ),
-                array(
-                        1
-                ),
-                array(
-                        new stdClass()
-                )
-        );
+        $data = [
+                [
+                        'string',
+                ],
+                [
+                        1,
+                ],
+                [
+                        new stdClass(),
+                ],
+        ];
         return $data;
     }
 
     /**
      * Test logging.
+     *
+     * @covers \local_kaltura_log_data
      * @param array $data Sample data from data provider method.
      * @dataProvider module_name_test
      */
-    public function test_local_kaltura_log_data_invalid_logging_data($data) {
+    public function test_local_kaltura_log_data_invalid_logging_data($data): void {
         $this->resetAfterTest(true);
 
         $result = local_kaltura_log_data('mymedia', 'http://localhost', $data, true);
@@ -814,12 +818,15 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
 
     /**
      * Test logging.
+     *
+     * @covers \local_kaltura_log_data
      */
-    public function test_local_kaltura_log_data_invalid_module() {
+    public function test_local_kaltura_log_data_invalid_module(): void {
         $this->resetAfterTest(true);
 
-        $json = '{"courses":[{"courseId":123,"courseName":"something","roles":"ltirole1,ltirole2"},{"courseId":456,"courseName":"else","roles":"ltirole3,ltirole4"}]';
-        $data = array();
+        $json = '{"courses":[{"courseId":123,"courseName":"something","roles":"ltirole1,ltirole2"},'.
+            '{"courseId":456,"courseName":"else","roles":"ltirole3,ltirole4"}]';
+        $data = [];
         $data['test1'] = 'test2';
         $data['test3'] = 'test4';
         $data['json'] = $json;
@@ -830,21 +837,24 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
 
     /**
      * Test logging.
+     *
+     * @covers \local_kaltura_log_data
      */
-    public function test_local_kaltura_log_data_logging_request_data() {
+    public function test_local_kaltura_log_data_logging_request_data(): void {
         global $DB;
 
         $this->resetAfterTest(true);
 
-        $json = '{"courses":[{"courseId":123,"courseName":"something","roles":"ltirole1,ltirole2"},{"courseId":456,"courseName":"else","roles":"ltirole3,ltirole4"}]';
-        $data = array();
+        $json = '{"courses":[{"courseId":123,"courseName":"something","roles":"ltirole1,ltirole2"},'.
+            '{"courseId":456,"courseName":"else","roles":"ltirole3,ltirole4"}]';
+        $data = [];
         $data['test1'] = 'test2';
         $data['test3'] = 'test4';
         $data['json'] = $json;
 
         $result = local_kaltura_log_data(KAF_MYMEDIA_MODULE, 'http://localhost', $data, true);
         $this->assertTrue($result);
-        $record = $DB->get_record('local_kaltura_log', array('module'=> 'mymedia'));
+        $record = $DB->get_record('local_kaltura_log', ['module' => 'mymedia']);
 
         $this->assertObjectHasAttribute('id', $record);
 
@@ -866,7 +876,7 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
         $result = local_kaltura_log_data(KAF_MEDIAGALLERY_MODULE, 'http://localhost', $data, true);
         $this->assertTrue($result);
 
-        $record = $DB->get_record('local_kaltura_log', array('module'=> 'coursegallery'));
+        $record = $DB->get_record('local_kaltura_log', ['module' => 'coursegallery']);
 
         $this->assertObjectHasAttribute('id', $record);
 
@@ -888,14 +898,17 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
 
     /**
      * Test logging.
+     *
+     * @covers \local_kaltura_log_data
      */
-    public function test_local_kaltura_log_data_logging_response_data() {
+    public function test_local_kaltura_log_data_logging_response_data(): void {
         global $DB;
 
         $this->resetAfterTest(true);
 
-        $json = '{"courses":[{"courseId":123,"courseName":"something","roles":"ltirole1,ltirole2"},{"courseId":456,"courseName":"else","roles":"ltirole3,ltirole4"}]';
-        $data = array();
+        $json = '{"courses":[{"courseId":123,"courseName":"something","roles":"ltirole1,ltirole2"},'.
+            '{"courseId":456,"courseName":"else","roles":"ltirole3,ltirole4"}]';
+        $data = [];
         $data['test1'] = 'test2';
         $data['test3'] = 'test4';
         $data['json'] = $json;
@@ -903,7 +916,7 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
         $result = local_kaltura_log_data('phpunit response', 'http://localhost', $data, false);
         $this->assertTrue($result);
 
-        $record = $DB->get_record('local_kaltura_log', array('module'=> 'phpunit response'));
+        $record = $DB->get_record('local_kaltura_log', ['module' => 'phpunit response']);
 
         $this->assertObjectHasAttribute('id', $record);
 
@@ -927,30 +940,34 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
      * Data provider for test_local_kaltura_format_uri().
      */
     public function uri_format_test() {
-        return array(
-                array('http://phpunit.tests/local_kaltura/tests'),
-                array('http://phpunit.tests/local_kaltura/tests/'),
-                array('https://phpunit.tests/local_kaltura/tests'),
-                array('https://phpunit.tests/local_kaltura/tests/'),
-                array('https://www.phpunit.tests/local_kaltura/tests/'),
-        );
+        return [
+                ['http://phpunit.tests/local_kaltura/tests'],
+                ['http://phpunit.tests/local_kaltura/tests/'],
+                ['https://phpunit.tests/local_kaltura/tests'],
+                ['https://phpunit.tests/local_kaltura/tests/'],
+                ['https://www.phpunit.tests/local_kaltura/tests/'],
+        ];
     }
 
     /**
      * Test local_kaltura_format_uri().
-     * @param string $url differnt URI formats.
-     * @dataProvider uri_format_test
+     *
+     * @covers \local_kaltura_format_uri
+     * @param string $uri different URI formats
+     * @return void
      */
-    public function test_local_kaltura_format_uri($uri) {
+    public function test_local_kaltura_format_uri($uri): void {
         $result = local_kaltura_format_uri($uri);
         $this->assertEquals('phpunit.tests/local_kaltura/tests', $result);
     }
 
     /**
-     * Test local_kaltura_get_kaf_publishing_data().  This test creates 4 coures.  Enrolls the user as an editing teacher in coures 1 and 4,
-     * then enrolls the user as a student in course 2.
+     * Test local_kaltura_get_kaf_publishing_data().  This test creates 4 courses.  Enrolls the user as an editing teacher in
+     * course 1 and 4, then enrolls the user as a student in course 2.
+     *
+     * @covers \local_kaltura_get_kaf_publishing_data
      */
-    public function test_local_kaltura_get_kaf_publishing_data_for_non_admin() {
+    public function test_local_kaltura_get_kaf_publishing_data_for_non_admin(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -963,32 +980,32 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
 
         // Create test courses and assign the user roles.
-        $coursedata = array(
+        $coursedata = [
             'fullname' => 'Test 1',
-            'shortname' => 'T1'
-        );
+            'shortname' => 'T1',
+        ];
         $courseone = $this->getDataGenerator()->create_course($coursedata);
 
         $this->getDataGenerator()->enrol_user($user->id, $courseone->id, $role['editingteacher']->id, 'manual');
 
-        $coursedata = array(
+        $coursedata = [
             'fullname' => 'Test 2',
-            'shortname' => 'T2'
-        );
+            'shortname' => 'T2',
+        ];
         $coursetwo = $this->getDataGenerator()->create_course($coursedata);
 
         $this->getDataGenerator()->enrol_user($user->id, $coursetwo->id, $role['student']->id, 'manual');
 
-        $coursedata = array(
+        $coursedata = [
             'fullname' => 'Test 3',
-            'shortname' => 'T3'
-        );
+            'shortname' => 'T3',
+        ];
         $coursethree = $this->getDataGenerator()->create_course($coursedata);
 
-        $coursedata = array(
+        $coursedata = [
             'fullname' => 'Test 4',
-            'shortname' => 'T4'
-        );
+            'shortname' => 'T4',
+        ];
         $coursefour = $this->getDataGenerator()->create_course($coursedata);
 
         $this->getDataGenerator()->enrol_user($user->id, $coursefour->id, $role['editingteacher']->id, 'manual');
@@ -998,53 +1015,62 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
 
         $result = local_kaltura_get_kaf_publishing_data();
 
-        $json = '{"courses":[{"courseId":"'.$courseone->id.'","courseName":"'.$courseone->fullname.'","courseShortName":"'.$courseone->shortname.'","roles":"Instructor"}';
-        $json .= ',{"courseId":"'.$coursetwo->id.'","courseName":"'.$coursetwo->fullname.'","courseShortName":"'.$coursetwo->shortname.'","roles":"Learner"}';
-        $json .= ',{"courseId":"'.$coursefour->id.'","courseName":"'.$coursefour->fullname.'","courseShortName":"'.$coursefour->shortname.'","roles":"Instructor"}]}';
+        $json = '{"courses":[{"courseId":"'.$courseone->id.'","courseName":"'.$courseone->fullname.'","courseShortName":"'.
+            $courseone->shortname.'","roles":"Instructor"}';
+        $json .= ',{"courseId":"'.$coursetwo->id.'","courseName":"'.$coursetwo->fullname.'","courseShortName":"'.
+            $coursetwo->shortname.'","roles":"Learner"}';
+        $json .= ',{"courseId":"'.$coursefour->id.'","courseName":"'.$coursefour->fullname.'","courseShortName":"'.
+            $coursefour->shortname.'","roles":"Instructor"}]}';
 
         $this->assertEquals(base64_encode($json), $result);
     }
 
     /**
-     * Test local_kaltura_get_kaf_publishing_data().  This test creates 4 coures.  Enrolls the user as an editing teacher in coures 1 and 4,
-     * then enrolls the user as a student in course 2.
+     * Test local_kaltura_get_kaf_publishing_data().  This test creates 4 courses.  Enrolls the user as an editing teacher in
+     * course 1 and 4, then enrolls the user as a student in course 2.
+     *
+     * @covers \local_kaltura_get_kaf_publishing_data
      */
-    public function test_local_kaltura_get_kaf_publishing_data_for_admin() {
+    public function test_local_kaltura_get_kaf_publishing_data_for_admin(): void {
         $this->resetAfterTest(true);
 
         // Create test courses and assign the user roles.
-        $coursedata = array(
+        $coursedata = [
             'fullname' => 'Test 1',
-            'shortname' => 'T1'
-        );
+            'shortname' => 'T1',
+        ];
         $courseone = $this->getDataGenerator()->create_course($coursedata);
 
-        $coursedata = array(
+        $coursedata = [
             'fullname' => 'Test 2',
-            'shortname' => 'T2'
-        );
+            'shortname' => 'T2',
+        ];
         $coursetwo = $this->getDataGenerator()->create_course($coursedata);
 
-        $coursedata = array(
+        $coursedata = [
             'fullname' => 'Test 3',
-            'shortname' => 'T3'
-        );
+            'shortname' => 'T3',
+        ];
         $coursethree = $this->getDataGenerator()->create_course($coursedata);
 
-        $coursedata = array(
+        $coursedata = [
             'fullname' => 'Test 4',
-            'shortname' => 'T4'
-        );
+            'shortname' => 'T4',
+        ];
         $coursefour = $this->getDataGenerator()->create_course($coursedata);
 
         advanced_testcase::setAdminUser();
 
         $result = local_kaltura_get_kaf_publishing_data();
 
-        $json = '{"courses":[{"courseId":"'.$courseone->id.'","courseName":"'.$courseone->fullname.'","courseShortName":"'.$courseone->shortname.'","roles":"urn:lti:sysrole:ims\/lis\/Administrator"}';
-        $json .= ',{"courseId":"'.$coursetwo->id.'","courseName":"'.$coursetwo->fullname.'","courseShortName":"'.$coursetwo->shortname.'","roles":"urn:lti:sysrole:ims\/lis\/Administrator"}';
-        $json .= ',{"courseId":"'.$coursethree->id.'","courseName":"'.$coursethree->fullname.'","courseShortName":"'.$coursethree->shortname.'","roles":"urn:lti:sysrole:ims\/lis\/Administrator"}';
-        $json .= ',{"courseId":"'.$coursefour->id.'","courseName":"'.$coursefour->fullname.'","courseShortName":"'.$coursefour->shortname.'","roles":"urn:lti:sysrole:ims\/lis\/Administrator"}]}';
+        $json = '{"courses":[{"courseId":"'.$courseone->id.'","courseName":"'.$courseone->fullname.'","courseShortName":"'.
+            $courseone->shortname.'","roles":"urn:lti:sysrole:ims\/lis\/Administrator"}';
+        $json .= ',{"courseId":"'.$coursetwo->id.'","courseName":"'.$coursetwo->fullname.'","courseShortName":"'.
+            $coursetwo->shortname.'","roles":"urn:lti:sysrole:ims\/lis\/Administrator"}';
+        $json .= ',{"courseId":"'.$coursethree->id.'","courseName":"'.$coursethree->fullname.'","courseShortName":"'.
+            $coursethree->shortname.'","roles":"urn:lti:sysrole:ims\/lis\/Administrator"}';
+        $json .= ',{"courseId":"'.$coursefour->id.'","courseName":"'.$coursefour->fullname.'","courseShortName":"'.
+            $coursefour->shortname.'","roles":"urn:lti:sysrole:ims\/lis\/Administrator"}]}';
 
         $this->assertEquals(base64_encode($json), $result);
     }
@@ -1052,20 +1078,22 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
     /**
      * Data provider for test_local_kaltura_url_contains_configured_hostname_fail().
      */
-    public function uri_hostname_tests_invalid() {
-        return array(
-                array('http://phpunit1.tests/local_kaltura/tests'),
-                array('http://phpunit.2tests/local_kaltura/tests/'),
-                array('http://tests.phpunit/local_kaltura/tests/'),
-        );
+    public static function uri_hostname_tests_invalid(): array {
+        return [
+                ['http://phpunit1.tests/local_kaltura/tests'],
+                ['http://phpunit.2tests/local_kaltura/tests/'],
+                ['http://tests.phpunit/local_kaltura/tests/'],
+        ];
     }
 
     /**
      * Test test_local_kaltura_url_contains_configured_hostname_fail().
+     *
+     * @covers \local_kaltura_url_contains_configured_hostname
      * @param string $url differnt URI formats.
      * @dataProvider uri_hostname_tests_invalid
      */
-    public function test_local_kaltura_url_contains_configured_hostname_fail($url) {
+    public function test_local_kaltura_url_contains_configured_hostname_fail($url): void {
         $this->resetAfterTest(true);
 
         set_config('kaf_uri', 'phpunit.tests', 'local_kaltura');
@@ -1077,19 +1105,21 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
     /**
      * Data provider for test_local_kaltura_url_contains_configured_hostname().
      */
-    public function uri_hostname_tests_valid() {
-        return array(
-                array('http://phpunit.tests/local_kaltura/'),
-                array('https://phpunit.tests/local_kaltura/tests/'),
-        );
+    public static function uri_hostname_tests_valid(): array {
+        return [
+                ['http://phpunit.tests/local_kaltura/'],
+                ['https://phpunit.tests/local_kaltura/tests/'],
+        ];
     }
 
     /**
      * Test test_local_kaltura_url_contains_configured_hostname().
+     *
+     * @covers \local_kaltura_url_contains_configured_hostname
      * @param string $url differnt URI formats.
      * @dataProvider uri_hostname_tests_valid
      */
-    public function test_local_kaltura_url_contains_configured_hostname($url) {
+    public function test_local_kaltura_url_contains_configured_hostname($url): void {
         $this->resetAfterTest(true);
 
         set_config('kaf_uri', 'phpunit.tests', 'local_kaltura');
@@ -1100,8 +1130,10 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
 
     /**
      * Test local_kaltura_add_protocol_to_url().
+     *
+     * @covers \local_kaltura_add_protocol_to_url
      */
-    public function test_local_kaltura_add_protocol_to_url() {
+    public function test_local_kaltura_add_protocol_to_url(): void {
         $expected = 'http://example.com';
         $url = local_kaltura_add_protocol_to_url($expected);
         $this->assertEquals($expected, $url);
@@ -1120,8 +1152,10 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
 
     /**
      * Test local_kaltura_add_kaf_uri_token().
+     *
+     * @covers \local_kaltura_add_kaf_uri_token
      */
-    public function test_local_kaltura_add_kaf_uri_token() {
+    public function test_local_kaltura_add_kaf_uri_token(): void {
         $this->resetAfterTest(true);
 
         // Set KAF URI to HTTP.
@@ -1163,9 +1197,11 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
 
     /**
      * Test local_kaltura_encode_object_for_storage()
+     *
+     * @covers \local_kaltura_encode_object_for_storage
      */
-    public function test_local_kaltura_encode_object_for_storage() {
-        $data = array();
+    public function test_local_kaltura_encode_object_for_storage(): void {
+        $data = [];
         $result = local_kaltura_encode_object_for_storage($data);
         $this->assertEquals('', $result);
 
@@ -1188,7 +1224,7 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
         $expected = base64_encode(serialize($data));
         $this->assertEquals($expected, $result);
 
-        $data = array('one' => 'abc', 'two' => 'def');
+        $data = ['one' => 'abc', 'two' => 'def'];
         $result = local_kaltura_encode_object_for_storage($data);
         $expected = base64_encode(serialize($data));
         $this->assertEquals($expected, $result);
@@ -1196,8 +1232,10 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
 
     /**
      * Test local_kaltura_decode_object_for_storage()
+     *
+     * @covers \local_kaltura_decode_object_for_storage
      */
-    public function test_local_kaltura_decode_object_for_storage() {
+    public function test_local_kaltura_decode_object_for_storage(): void {
         $result = local_kaltura_decode_object_for_storage('');
         $this->assertEquals('', $result);
 
@@ -1208,7 +1246,7 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
         $result = local_kaltura_decode_object_for_storage($data);
         $this->assertEquals($expected, $result);
 
-        $expected = array('one' => 'abc', 'two' => 'def');
+        $expected = ['one' => 'abc', 'two' => 'def'];
         $data = base64_encode(serialize($expected));
         $result = local_kaltura_decode_object_for_storage($data);
         $this->assertEquals($expected, $result);
@@ -1216,8 +1254,10 @@ class local_kaltura_locallib_testcase extends advanced_testcase {
 
     /**
      * Test local_kaltura_convert_kaltura_base_entry_object()
+     *
+     * @covers \local_kaltura_convert_kaltura_base_entry_object
      */
-    public function test_local_kaltura_convert_kaltura_base_entry_object() {
+    public function test_local_kaltura_convert_kaltura_base_entry_object(): void {
         $result = local_kaltura_convert_kaltura_base_entry_object(new stdclass());
         $this->assertFalse($result);
 

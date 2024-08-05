@@ -50,16 +50,19 @@ class local_kaltura_migration_form extends moodleform {
 
         // Print more stats on the current state of the migration.
         $mform->addElement('static', 'migration_start_time', get_string('migration_start_time', 'local_kaltura'), $message);
-        $mform->addElement('static', 'entries_migrated', get_string('entries_migrated', 'local_kaltura'), local_kaltura_migration_progress::get_entriesmigrated());
-        $mform->addElement('static', 'categories created', get_string('categories_created', 'local_kaltura'), local_kaltura_migration_progress::get_categoriescreated());
+        $mform->addElement('static', 'entries_migrated', get_string('entries_migrated', 'local_kaltura'),
+            local_kaltura_migration_progress::get_entriesmigrated());
+        $mform->addElement('static', 'categories created', get_string('categories_created', 'local_kaltura'),
+            local_kaltura_migration_progress::get_categoriescreated());
 
-        $buttonarray = array();
+        $buttonarray = [];
 
         $mform->addElement('select', 'kafcategory', get_string('migration_select_a_category', 'local_kaltura'), $categories);
 
         $catid = local_kaltura_migration_progress::get_kafcategoryrootid();
 
-        // If the migration was started perviously, then prevent the user from chaning the migration category by disabling the drop down, but setting the default value.
+        // If the migration was started perviously, then prevent the user from chaning the migration category by disabling the drop
+        // down, but setting the default value.
         $migrationstarted = local_kaltura_migration_progress::get_migrationstarted();
         if (!empty($migrationstarted) && !empty($catid) && isset($categories[$catid])) {
             $mform->addElement('hidden', 'disabledropdown', $catid);
@@ -72,6 +75,6 @@ class local_kaltura_migration_form extends moodleform {
         $buttonarray[] =& $mform->createElement('submit', 'submitbutton', get_string('migration_start_continue', 'local_kaltura'));
         $buttonarray[] =& $mform->createElement('submit', 'startover', get_string('startover', 'local_kaltura'));
         $buttonarray[] =& $mform->createElement('submit', 'cancel', get_string('back'));
-        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $mform->addGroup($buttonarray, 'buttonar', '', [' '], false);
     }
 }

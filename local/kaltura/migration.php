@@ -39,7 +39,8 @@ $site = get_site();
 $PAGE->navbar->add(get_string('administrationsite'));
 $PAGE->navbar->add(get_string('plugins', 'admin'));
 $PAGE->navbar->add(get_string('localplugins'));
-$PAGE->navbar->add(get_string('pluginname', 'local_kaltura'), new moodle_url('/admin/settings.php', array('section' => 'local_kaltura')));
+$PAGE->navbar->add(get_string('pluginname', 'local_kaltura'), new moodle_url('/admin/settings.php',
+    ['section' => 'local_kaltura']));
 $PAGE->navbar->add(get_string('migration_header', 'local_kaltura'));
 
 $PAGE->set_url($url);
@@ -54,7 +55,7 @@ require_login(null, false);
 
 require_capability('local/kaltura:migrate_data', $context);
 
-$url = new moodle_url('/admin/settings.php', array('section' => 'local_kaltura'));
+$url = new moodle_url('/admin/settings.php', ['section' => 'local_kaltura']);
 
 $form = new local_kaltura_migration_form();
 $redirectmessage = '';
@@ -70,9 +71,8 @@ if ($data = $form->get_data()) {
 
     // User hit submit button.  Check for records since the configured date.
     if (isset($data->submitbutton)) {
-        if(local_kaltura_get_channels_id(local_kaltura_get_kaltura_client(), $data->kafcategory) === false)
-        {
-            $url = new moodle_url('/admin/settings.php', array('section' => 'local_kaltura'));
+        if (local_kaltura_get_channels_id(local_kaltura_get_kaltura_client(), $data->kafcategory) === false) {
+            $url = new moodle_url('/admin/settings.php', ['section' => 'local_kaltura']);
             notice("Selected target root category does not have a KAF structure (subcategory '>site>channels' is missing)", $url);
         }
         // Set the migration start time and initialize the KAF root category id.
@@ -82,7 +82,7 @@ if ($data = $form->get_data()) {
         }
 
         // An array mapping of old categories to new categories.
-        $cachedcategories = array();
+        $cachedcategories = [];
 
         // Migrate entries that belong to categories under the old rood category.
         list($categoryentries, $cachedcategories) = local_kaltura_move_entries_to_kaf_category_tree($data->kafcategory, 1);

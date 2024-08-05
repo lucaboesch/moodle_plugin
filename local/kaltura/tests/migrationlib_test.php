@@ -23,6 +23,8 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
+namespace local_kaltura;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -30,13 +32,17 @@ require_once($CFG->dirroot.'/local/kaltura/locallib.php');
 require_once($CFG->dirroot.'/local/kaltura/migrationlib.php');
 
 /**
+ * Kaltura local_kaltura_migration_progress class phpunit tests.
+ *
  * @group local_kaltura
  */
-class local_kaltura_migrationlib_testcase extends advanced_testcase {
+final class migrationlib_test extends advanced_testcase {
     /**
      * Test initialization of config values.
+     *
+     * @covers \local_kaltura_migration_progress
      */
-    public function test_initialization_of_config_values() {
+    public function test_initialization_of_config_values(): void {
         $this->resetAfterTest(true);
 
         $result = new local_kaltura_migration_progress();
@@ -60,8 +66,10 @@ class local_kaltura_migrationlib_testcase extends advanced_testcase {
 
     /**
      * Test existingcategory accessor functions.
+     *
+     * @covers \local_kaltura_migration_progress
      */
-    public function test_existingcategoryrun() {
+    public function test_existingcategoryrun(): void {
         $this->resetAfterTest(true);
 
         $result = new local_kaltura_migration_progress();
@@ -78,8 +86,10 @@ class local_kaltura_migrationlib_testcase extends advanced_testcase {
 
     /**
      * Test sharedcategoryrun accessor functions.
+     *
+     * @covers \local_kaltura_migration_progress
      */
-    public function test_sharedcategoryrun() {
+    public function test_sharedcategoryrun(): void {
         $this->resetAfterTest(true);
 
         $result = new local_kaltura_migration_progress();
@@ -96,8 +106,10 @@ class local_kaltura_migrationlib_testcase extends advanced_testcase {
 
     /**
      * Test kafcategoryrootid functions.
+     *
+     * @covers \local_kaltura_migration_progress
      */
-    public function test_kafcategoryrootid() {
+    public function test_kafcategoryrootid(): void {
         $this->resetAfterTest(true);
 
         $result = new local_kaltura_migration_progress();
@@ -114,8 +126,10 @@ class local_kaltura_migrationlib_testcase extends advanced_testcase {
 
     /**
      * Test categoriescreated functions.
+     *
+     * @covers \local_kaltura_migration_progress
      */
-    public function test_categoriescreated() {
+    public function test_categoriescreated(): void {
         $this->resetAfterTest(true);
 
         $result = new local_kaltura_migration_progress();
@@ -132,8 +146,10 @@ class local_kaltura_migrationlib_testcase extends advanced_testcase {
 
     /**
      * Test entriesmigrated functions.
+     *
+     * @covers \local_kaltura_migration_progress
      */
-    public function test_entriesmigrated() {
+    public function test_entriesmigrated(): void {
         $this->resetAfterTest(true);
 
         $result = new local_kaltura_migration_progress();
@@ -150,8 +166,10 @@ class local_kaltura_migrationlib_testcase extends advanced_testcase {
 
     /**
      * Test migrationstarted functions.
+     *
+     * @covers \local_kaltura_migration_progress
      */
-    public function test_migrationstarted() {
+    public function test_migrationstarted(): void {
         $this->resetAfterTest(true);
 
         $result = new local_kaltura_migration_progress();
@@ -168,8 +186,10 @@ class local_kaltura_migrationlib_testcase extends advanced_testcase {
 
     /**
      * Test resetting all migration progress properties functions.
+     *
+     * @covers \local_kaltura_migration_progress
      */
-    public function test_resetall() {
+    public function test_resetall(): void {
         $this->resetAfterTest(true);
 
         $result = new local_kaltura_migration_progress();

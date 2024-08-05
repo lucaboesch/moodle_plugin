@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Kaltura filter script.
+ * This filter provides automatic embedding of Kaltura videos
  *
  * @package    filter_kaltura
  * @author     Remote-Learner.net Inc
@@ -23,6 +23,14 @@
  * @copyright  (C) 2014 Remote-Learner.net Inc (http://www.remote-learner.net)
  */
 
+/**
+ * Kaltura filter script
+ *
+ * @package    filter_kaltura
+ * @author     Remote-Learner.net Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  (C) 2014 Remote-Learner.net Inc (http://www.remote-learner.net)
+ */
 class filter_kaltura extends moodle_text_filter {
     /** @var object $context The current page context. */
     public static $pagecontext = null;
@@ -45,6 +53,7 @@ class filter_kaltura extends moodle_text_filter {
     /**
      * This function runs once during a single page request and initialzies
      * some data.
+     *
      * @param object $page Moodle page object.
      * @param object $context Page context object.
      */
@@ -68,6 +77,7 @@ class filter_kaltura extends moodle_text_filter {
 
     /**
      * This function returns the course context where possible.
+     *
      * @param object $context A context object.
      * @return object A Moodle context object.
      */
@@ -89,11 +99,12 @@ class filter_kaltura extends moodle_text_filter {
      * This function does the work of converting text that matches a regular expression into
      * Kaltura video markup, so that links to Kaltura videos are displayed in the Kaltura
      * video player.
+     *
      * @param string $text Text that is to be displayed on the page.
      * @param array $options An array of additional options.
      * @return string The same text or modified text is returned.
      */
-    public function filter($text, array $options = array()) {
+    public function filter($text, array $options = []) {
         global $CFG;
 
         // Check if the the filter plug-in is enabled.
@@ -107,7 +118,7 @@ class filter_kaltura extends moodle_text_filter {
         }
 
         // Performance shortcut.  All regexes bellow end with the </a> tag, if not present nothing can match.
-        if (false  === stripos($text, '</a>')) {
+        if (false === stripos($text, '</a>')) {
             return $text;
         }
 
@@ -117,16 +128,18 @@ class filter_kaltura extends moodle_text_filter {
         // Search for v3 Kaltura embedded anchor tag format.
         $uri = self::$apiurl;
         $uri = rtrim($uri, '/');
-        $uri = str_replace(array('.', '/', 'https'), array('\.', '\/', 'https?'), $uri);
+        $uri = str_replace(['.', '/', 'https'], ['\.', '\/', 'https?'], $uri);
 
+        // phpcs:disable moodle.Files.LineLength.TooLong
         $oldsearch = '/<a\s[^>]*href="('.$uri.')\/index\.php\/kwidget\/wid\/_([0-9]+)\/uiconf_id\/([0-9]+)\/entry_id\/([\d]+_([a-z0-9]+))\/v\/flash"[^>]*>([^>]*)<\/a>/is';
         $newtext = preg_replace_callback($oldsearch, 'filter_kaltura_callback', $newtext);
 
-        // Search for newer versoin of Kaltura embedded anchor tag format.
+        // Search for newer version of Kaltura embedded anchor tag format.
         $kafuri = self::$kafuri;
         $kafuri = rtrim($kafuri, '/');
-        $kafuri = str_replace(array('http://', 'https://', '.', '/'), array('https?://', 'https?://', '\.', '\/'), $kafuri);
+        $kafuri = str_replace(['http://', 'https://', '.', '/'], ['https?://', 'https?://', '\.', '\/'], $kafuri);
 
+        // phpcs:disable moodle.Files.LineLength
         $search = $search = '/<a\s[^>]*href="(((https?:\/\/'.KALTURA_URI_TOKEN.')|('.$kafuri.')))\/browseandembed\/index\/media\/entryid\/([\d]+_[a-z0-9]+)(\/([a-zA-Z0-9]+\/[a-zA-Z0-9]+\/)*)"[^>]*>([^>]*)<\/a>/is';
 
         if (!empty($CFG->filter_kaltura_uris)) {
@@ -143,7 +156,7 @@ class filter_kaltura extends moodle_text_filter {
                         $altkafuri = 'http://' . $altkafuri;
                     }
 
-                    $altkafuri = str_replace(array('http://', 'https://', '.', '/'), array('https?://', 'https?://', '\.', '\/'), $altkafuri);
+                    $altkafuri = str_replace(['http://', 'https://', '.', '/'], ['https?://', 'https?://', '\.', '\/'], $altkafuri);
                     $search .= '|('.$altkafuri.')';
                 }
             }
@@ -165,6 +178,8 @@ class filter_kaltura extends moodle_text_filter {
 
 /**
  * Change links to Kaltura into embedded Kaltura videos.
+ *
+ * @package filter_kaltura
  * @param  array $link An array of elements matching the regular expression from class filter_kaltura - filter().
  * @return string Kaltura embed video markup.
  */
@@ -179,12 +194,12 @@ function filter_kaltura_callback($link) {
         // Get the height and width of the iframe.
         $properties = explode('||', $link[$count - 1]);
 
-        $width = $properties[2];
-        $height = $properties[3];
-
         if (4 != count($properties)) {
             return $link[0];
         }
+
+        $width = $properties[2];
+        $height = $properties[3];
 
         $source = filter_kaltura::$kafuri . '/browseandembed/index/media/entryid/' . $link[$count - 4] . $link[$count - 3];
     }
@@ -195,30 +210,29 @@ function filter_kaltura_callback($link) {
         $source .= filter_kaltura::$defaultwidth.'x'.filter_kaltura::$defaultheight.'/playerSkin/'.$link[3];
     }
 
-    $params = array(
+    $params = [
         'courseid' => filter_kaltura::$pagecontext->instanceid,
         'height' => $height,
         'width' => $width,
         'withblocks' => 0,
-        'source' => $source
-
-    );
+        'source' => $source,
+    ];
 
     $url = new moodle_url('/filter/kaltura/lti_launch.php', $params);
 
-    $iframe = html_writer::tag('iframe', '', array(
+    $iframe = html_writer::tag('iframe', '', [
         'width' => $width,
         'height' => $height,
         'class' => 'kaltura-player-iframe',
         'allowfullscreen' => 'true',
         'allow' => 'autoplay *; fullscreen *; encrypted-media *; camera *; microphone *; display-capture *;',
         'src' => $url->out(false),
-        'frameborder' => '0'
-    ));
+        'frameborder' => '0',
+    ]);
 
-    $iframeContainer = html_writer::tag('div', $iframe, array(
-        'class' => 'kaltura-player-container'
-    ));
+    $iframecontainer = html_writer::tag('div', $iframe, [
+        'class' => 'kaltura-player-container',
+    ]);
 
-    return $iframeContainer;
+    return $iframecontainer;
 }

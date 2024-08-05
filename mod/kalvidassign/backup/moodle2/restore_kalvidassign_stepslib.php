@@ -1,4 +1,6 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -30,9 +32,14 @@
  */
 class restore_kalvidassign_activity_structure_step extends restore_activity_structure_step {
 
+    /**
+     * Define the structure for the kalvidassign activity
+     *
+     * @return backup_nested_element
+     */
     protected function define_structure() {
 
-        $paths = array();
+        $paths = [];
         $userinfo = $this->get_setting_value('userinfo');
 
         $paths[] = new restore_path_element('kalvidassign', '/activity/kalvidassign');
@@ -45,6 +52,11 @@ class restore_kalvidassign_activity_structure_step extends restore_activity_stru
         return $this->prepare_activity_structure($paths);
     }
 
+    /**
+     * Process kalvidassign information
+     *
+     * @param array $data information
+     */
     protected function process_kalvidassign($data) {
         global $DB;
 
@@ -54,12 +66,17 @@ class restore_kalvidassign_activity_structure_step extends restore_activity_stru
 
         $data->timemodified = $this->apply_date_offset($data->timemodified);
 
-        // insert the kalvidassign record.
+        // Insert the kalvidassign record.
         $newitemid = $DB->insert_record('kalvidassign', $data);
-        // immediately after inserting "activity" record, call this.
+        // Immediately after inserting "activity" record, call this.
         $this->apply_activity_instance($newitemid);
     }
 
+    /**
+     * Process kalvidassign submission information
+     *
+     * @param array $data information
+     */
     protected function process_kalvidassign_submission($data) {
         global $DB;
 
@@ -74,7 +91,9 @@ class restore_kalvidassign_activity_structure_step extends restore_activity_stru
         $this->set_mapping('kalvidassign_submission', $oldid, $newitemid);
     }
 
-
+    /**
+     * Once the database tables have been fully restored, restore the files
+     */
     protected function after_execute() {
         // Add kalvidassign related files, no need to match by itemname (just internally handled context).
         $this->add_related_files('mod_kalvidassign', 'submission', 'kalvidassign_submission');

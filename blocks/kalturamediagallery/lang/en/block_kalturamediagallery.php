@@ -14,7 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$string['pluginname'] = 'Kaltura Media Gallery';
+/**
+ * Kaltura Media Gallery block language file.
+ *
+ * @package    block_kalturamediagallery
+ * @author     Remote-Learner.net Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
+ */
+
 $string['kalturamediagallery:addinstance'] = 'Add a new Kaltura Media Gallery block';
 $string['kalturamediagallery:myaddinstance'] = 'Add a new Kaltura Media Gallery block to Dashboard';
+$string['pluginname'] = 'Kaltura Media Gallery';
 $string['privacy:metadata'] = 'The Kaltura Media Gallery block only displays a link to Kaltura Media Gallery local plugin';

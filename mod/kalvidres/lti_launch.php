@@ -46,7 +46,7 @@ if (!has_capability('mod/kalvidres:addinstance', $context) && is_guest($context)
 
 $course = get_course($courseid);
 
-$launch = array();
+$launch = [];
 $launch['id'] = 1;
 $launch['cmid'] = 0;
 $launch['title'] = 'Kaltura video resource';

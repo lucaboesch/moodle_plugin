@@ -1,4 +1,6 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -37,10 +39,10 @@ function local_mymedia_extend_navigation($navigation) {
     }
 
     // When on the admin-index page, first check if the capability exists.
-    // This is to cover the edge case on the Plugins check page, where a check for the capability is performed before the capability has been added to the Moodle mdl_capabilities
-    // table.
+    // This is to cover the edge case on the Plugins check page, where a check for the capability is performed before the capability
+    // has been added to the Moodle mdl_capabilities table.
     if ('admin-index' === $PAGE->pagetype) {
-        $exists = $DB->record_exists('capabilities', array('name' => 'local/mymedia:view'));
+        $exists = $DB->record_exists('capabilities', ['name' => 'local/mymedia:view']);
 
         if (!$exists) {
             return;
@@ -53,26 +55,29 @@ function local_mymedia_extend_navigation($navigation) {
         return;
     }
 
-    // side navigation
+    // Side navigation.
     if (get_config('local_mymedia', 'link_location') == LOCAL_KALTURAMYMEDIA_LINK_LOCATION_SIDE_NAVIGATION_MENU) {
         $nodehome = $navigation->get('home');
-        if (empty($nodehome)){
+        if (empty($nodehome)) {
             $nodehome = $navigation;
         }
         $mymedia = get_string('nav_mymedia', 'local_mymedia');
         $icon = new pix_icon('my-media', '', 'local_mymedia');
-        $nodemymedia = $nodehome->add($mymedia, new moodle_url('/local/mymedia/mymedia.php'), navigation_node::NODETYPE_LEAF, $mymedia, 'mymedia', $icon);
+        $nodemymedia = $nodehome->add($mymedia, new moodle_url('/local/mymedia/mymedia.php'), navigation_node::NODETYPE_LEAF,
+            $mymedia, 'mymedia', $icon);
         $nodemymedia->showinflatnavigation = true;
         return;
     }
 
-    // top navigation
-    $menuHeaderStr = get_string('nav_mymedia', 'local_mymedia');
-    if (strpos($CFG->custommenuitems, $menuHeaderStr) !== false) {
-        //My Media is already part of the config, no need to add it again.
+    // Top navigation.
+    $menuheaderstr = get_string('nav_mymedia', 'local_mymedia');
+    if (strpos($CFG->custommenuitems, $menuheaderstr) !== false) {
+        // My Media is already part of the config, no need to add it again.
         return;
     }
 
-    $myMediaStr = "\n$menuHeaderStr|/local/mymedia/mymedia.php";
-    $CFG->custommenuitems .= $myMediaStr;
+    $mymediastr = "\n$menuheaderstr|/local/mymedia/mymedia.php";
+    if (empty($custommenuitems) && (isset($CFG->custommenuitems) && !empty($CFG->custommenuitems))) {
+        $CFG->custommenuitems .= $mymediastr;
+    }
 }

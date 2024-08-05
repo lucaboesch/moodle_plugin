@@ -23,6 +23,9 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
+// phpcs:disable moodle.Commenting.MissingDocblock
+defined('MOODLE_INTERNAL') || die();
+
 $PAGE->set_pagelayout('embedded');
 echo $OUTPUT->header();
 $playurl = urldecode($url);

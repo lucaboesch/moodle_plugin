@@ -17,7 +17,7 @@
 /**
  * Kaltura media LTI launch wrapper page.
  *
- * @module      tiny_kalturamedia
+ * @package     tiny_kalturamedia
  * @copyright   2023 Roi Levi <roi.levi@kaltura.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -42,19 +42,19 @@ echo html_writer::script('', 'js/ltidialoglib.js');
 
 echo tiny_kalturamedia_preview_embed_form($contextid);
 
-$urlparams = array(
+$urlparams = [
     'withblocks' => 0,
     'width' => KALTURA_PANEL_WIDTH,
-    'height' => KALTURA_PANEL_HEIGHT
-);
+    'height' => KALTURA_PANEL_HEIGHT,
+];
 $url = new moodle_url('/lib/editor/tiny/plugins/kalturamedia/lti_launch.php', $urlparams);
 
-$params = array(
+$params = [
     'ltilaunchurl' => $url->out(),
     'objecttagheight' => TINY_KALTURAMEDIA_OBJECT_TAG_HEIGHT,
     'objecttagid' => TINY_KALTURAMEDIA_OBJECT_TAG_ID,
-    'previewiframeid' => TINY_KALTURAMEDIA_PREVIEW_IFRAME_TAG_ID
-);
-$PAGE->requires->yui_module('moodle-local_kaltura-ltitinymcepanel', 'M.local_kaltura.init', array($params), null, true);
+    'previewiframeid' => TINY_KALTURAMEDIA_PREVIEW_IFRAME_TAG_ID,
+];
+$PAGE->requires->yui_module('moodle-local_kaltura-ltitinymcepanel', 'M.local_kaltura.init', [$params], null, true);
 
 echo $OUTPUT->footer();

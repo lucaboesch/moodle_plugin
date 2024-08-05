@@ -17,7 +17,7 @@
 /**
  * Kaltura media LTI launch page.
  *
- * @module      tiny_kalturamedia
+ * @package     tiny_kalturamedia
  * @copyright   2023 Roi Levi <roi.levi@kaltura.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -36,7 +36,7 @@ $withblocks = optional_param('withblocks', 0, PARAM_INT);
 
 $context = context::instance_by_id($contextid);
 
-$launch = array();
+$launch = [];
 $course = 0;
 
 if ($context instanceof context_course) {
@@ -45,7 +45,7 @@ if ($context instanceof context_course) {
 } else if ($context instanceof context_system || $context instanceof context_coursecat) {
     $course = get_course(1);
 } else {
-    // Find parent context
+    // Find parent context.
     $parentcontexts = $context->get_parent_contexts(false);
 
     foreach ($parentcontexts as $ctx) {

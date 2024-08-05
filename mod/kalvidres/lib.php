@@ -1,4 +1,6 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -21,10 +23,6 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');
-}
-
 /**
  * Given an object containing all the necessary data,
  * (defined by the form in mod_form.php) this function
@@ -40,7 +38,7 @@ function kalvidres_add_instance($kalvidres) {
 
     $kalvidres->timecreated = time();
     $kalvidres->source = local_kaltura_build_kaf_uri($kalvidres->source);
-    $kalvidres->id =  $DB->insert_record('kalvidres', $kalvidres);
+    $kalvidres->id = $DB->insert_record('kalvidres', $kalvidres);
 
     return $kalvidres->id;
 }
@@ -76,11 +74,11 @@ function kalvidres_update_instance($kalvidres) {
 function kalvidres_delete_instance($id) {
     global $DB;
 
-    if (! $kalvidres = $DB->get_record('kalvidres', array('id' => $id))) {
+    if (! $kalvidres = $DB->get_record('kalvidres', ['id' => $id])) {
         return false;
     }
 
-    $DB->delete_records('kalvidres', array('id' => $kalvidres->id));
+    $DB->delete_records('kalvidres', ['id' => $kalvidres->id]);
 
     return true;
 }
@@ -92,8 +90,13 @@ function kalvidres_delete_instance($id) {
  * $return->time = the time they did it
  * $return->info = a short text description
  *
+ * @param stdClass $course The course record.
+ * @param stdClass $user The user record.
+ * @param cm_info|stdClass $mod The course module info object or record.
+ * @param stdClass $kalvidres The kalvidres instance record.
  * @return null
- * @todo Finish documenting this function
+ * // phpcs:ignore moodle.Commenting.ValidTags.Invalid
+ * @TODO Finish documenting this function
  */
 function kalvidres_user_outline($course, $user, $mod, $kalvidres) {
     $return = new stdClass;
@@ -106,8 +109,13 @@ function kalvidres_user_outline($course, $user, $mod, $kalvidres) {
  * Print a detailed representation of what a user has done with
  * a given particular instance of this module, for user activity reports.
  *
- * @return boolean
- * @todo Finish documenting this function
+ * @param stdClass $course The course record.
+ * @param stdClass $user The user record.
+ * @param cm_info|stdClass $mod The course module info object or record.
+ * @param stdClass $kalvidres The kalvidres instance record.
+ * @return bool always return true.
+ * // phpcs:ignore moodle.Commenting.ValidTags.Invalid
+ * @TODO Finish documenting this function
  */
 function kalvidres_user_complete($course, $user, $mod, $kalvidres) {
     return true;
@@ -118,12 +126,17 @@ function kalvidres_user_complete($course, $user, $mod, $kalvidres) {
  * that has occurred in kalvidres activities and print it out.
  * Return true if there was output, or false is there was none.
  *
- * @return boolean
- * @todo Finish documenting this function
+ * @param mixed $course the course to print activity for
+ * @param bool $viewfullnames boolean to determine whether to show full names or not
+ * @param int $timestart the time the rendering started
+ * @return bool Always returns false.
+ * // phpcs:ignore moodle.Commenting.ValidTags.Invalid
+ * @TODO Finish documenting this function
+ * // phpcs:ignore moodle.Commenting.ValidTags.Invalid
+ * @TODO Finish this function.
  */
 function kalvidres_print_recent_activity($course, $viewfullnames, $timestart) {
-    // TODO: finish this function
-    return false;  //  True if anything was printed, otherwise false
+    return false; // True if anything was printed, otherwise false.
 }
 
 /**
@@ -145,13 +158,16 @@ function kalvidres_cron () {
  *
  * @param int $kalvidresid ID of an instance of this module
  * @return boolean|array false if no participants, array of objects otherwise
+ * // phpcs:ignore moodle.Commenting.ValidTags.Invalid
+ * @TODO Finish this function.
  */
 function kalvidres_get_participants($kalvidresid) {
-    // TODO: finish this function
     return false;
 }
 
 /**
+ * List of features supported in mod_kalvidres module
+ *
  * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed True if module supports feature, null if doesn't know
  */

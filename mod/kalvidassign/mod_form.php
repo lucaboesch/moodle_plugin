@@ -1,4 +1,6 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -21,12 +23,13 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');
-}
+defined('MOODLE_INTERNAL') || die();
 
 require_once(dirname(dirname(dirname(__FILE__))).'/course/moodleform_mod.php');
 
+/**
+ * The mod_form class for the kalvidassign module.
+ */
 class mod_kalvidassign_mod_form extends moodleform_mod {
     /**
      * Definition function for the form.
@@ -40,7 +43,7 @@ class mod_kalvidassign_mod_form extends moodleform_mod {
 
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
-        $mform->addElement('text', 'name', get_string('name', 'kalvidassign'), array('size' => '64'));
+        $mform->addElement('text', 'name', get_string('name', 'kalvidassign'), ['size' => '64']);
 
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
@@ -51,12 +54,13 @@ class mod_kalvidassign_mod_form extends moodleform_mod {
 
         $this->standard_intro_elements();
 
-        $mform->addElement('date_time_selector', 'timeavailable', get_string('availabledate', 'kalvidassign'), array('optional' => true));
+        $mform->addElement('date_time_selector', 'timeavailable', get_string('availabledate', 'kalvidassign'),
+            ['optional' => true]);
         $mform->setDefault('timeavailable', time());
-        $mform->addElement('date_time_selector', 'timedue', get_string('duedate', 'kalvidassign'), array('optional' => true));
-        $mform->setDefault('timedue', time()+7*24*3600);
+        $mform->addElement('date_time_selector', 'timedue', get_string('duedate', 'kalvidassign'), ['optional' => true]);
+        $mform->setDefault('timedue', time() + 7 * 24 * 3600);
 
-        $ynoptions = array( 0 => get_string('no'), 1 => get_string('yes'));
+        $ynoptions = [ 0 => get_string('no'), 1 => get_string('yes')];
 
         $mform->addElement('select', 'preventlate', get_string('preventlate', 'kalvidassign'), $ynoptions);
         $mform->setDefault('preventlate', 0);

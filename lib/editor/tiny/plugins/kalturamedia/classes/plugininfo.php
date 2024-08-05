@@ -30,20 +30,43 @@ use editor_tiny\plugin_with_buttons;
 use editor_tiny\plugin_with_menuitems;
 use editor_tiny\plugin_with_configuration;
 
+/**
+ * Tiny Kaltura Media plugin for Moodle.
+ *
+ */
 class plugininfo extends plugin implements plugin_with_configuration, plugin_with_buttons, plugin_with_menuitems {
 
+    /**
+     * Get the available buttons.
+     *
+     * @return string[]
+     */
     public static function get_available_buttons(): array {
         return [
             'tiny_kalturamedia/plugin',
         ];
     }
 
+    /**
+     * Get the available menu items.
+     *
+     * @return string[]
+     */
     public static function get_available_menuitems(): array {
         return [
             'tiny_kalturamedia/plugin',
         ];
     }
 
+    /**
+     * Get the configuration
+     *
+     * @param context $context
+     * @param array $options
+     * @param array $fpoptions
+     * @param \editor_tiny\editor|null $editor
+     * @return array
+     */
     public static function get_plugin_configuration_for_context(
         context $context,
         array $options,
@@ -53,7 +76,7 @@ class plugininfo extends plugin implements plugin_with_configuration, plugin_wit
         return [
             // Your values go here.
             // These will be mapped to a namespaced EditorOption in Tiny.
-            // Pass contextId - later appended to ltibrowse url
+            // Pass contextId - later appended to ltibrowse url.
             'contextid' => $context->id,
         ];
     }

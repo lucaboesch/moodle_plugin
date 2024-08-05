@@ -1,4 +1,6 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -20,20 +22,20 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
-$string['modulenameplural'] = 'Kaltura Video Resource';
-$string['modulename'] = 'Kaltura Video Resource';
-$string['modulename_help'] = 'The Kaltura Video Resource enables a teacher to create a resource using a Kaltura video.';
-$string['pluginadministration'] = 'Kaltura Video Resource';
-$string['noresource'] = 'No video resource found in the course';
-$string['pluginname'] = 'Kaltura Video Resource';
-$string['name'] = 'Name';
-$string['novidsource'] = 'No media content found. You must add media content in order to save a video resource.';
-$string['video_hdr'] = 'Video';
 $string['add_video'] = 'Add media';
-$string['invalidid'] = 'Invalid ID';
+$string['eventvideo_resource_viewed'] = 'Video resource viewed';
 $string['invalid_launch_parameters'] = 'Invalid launch parameters';
 $string['invalid_source_parameter'] = 'Invalid source parameter';
-$string['replace_video'] = 'Replace media';
+$string['invalidid'] = 'Invalid ID';
 $string['kalvidres:addinstance'] = 'Add a Kaltura Video Resource';
-$string['eventvideo_resource_viewed'] = 'Video resource viewed';
+$string['modulename'] = 'Kaltura Video Resource';
+$string['modulename_help'] = 'The Kaltura Video Resource enables a teacher to create a resource using a Kaltura video.';
+$string['modulenameplural'] = 'Kaltura Video Resource';
+$string['name'] = 'Name';
+$string['noresource'] = 'No video resource found in the course';
+$string['novidsource'] = 'No media content found. You must add media content in order to save a video resource.';
+$string['pluginadministration'] = 'Kaltura Video Resource';
+$string['pluginname'] = 'Kaltura Video Resource';
 $string['privacy:metadata'] = 'Kaltura video resource plugin does not store any personal data.';
+$string['replace_video'] = 'Replace media';
+$string['video_hdr'] = 'Video';

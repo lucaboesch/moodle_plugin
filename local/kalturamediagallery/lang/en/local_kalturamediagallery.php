@@ -26,11 +26,11 @@
 $string['heading_mediagallery'] = 'Media Gallery';
 $string['invalid_launch_parameters'] = 'Invalid launch parameters';
 $string['kalturamediagallery:view'] = 'View Media Gallery';
-$string['nav_mediagallery'] = 'Media Gallery';
-$string['pluginname'] = 'Kaltura Media Gallery';
-$string['setting_heading_desc'] = 'Settings';
 $string['link_location'] = 'Link location';
+$string['link_location_course_settings'] = 'Course settings';
 $string['link_location_desc'] = 'Choose where mediagallery link is displayed';
 $string['link_location_navigation'] = 'Navigation block';
-$string['link_location_course_settings'] = 'Course settings';
+$string['nav_mediagallery'] = 'Media Gallery';
+$string['pluginname'] = 'Kaltura Media Gallery';
 $string['privacy:metadata'] = 'Kaltura media gallery plugin does not store any personal data.';
+$string['setting_heading_desc'] = 'Settings';

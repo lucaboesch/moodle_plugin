@@ -1,4 +1,6 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -21,6 +23,12 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
+/**
+ * Upgrade the plugin.
+ *
+ * @param int $oldversion
+ * @return bool always true
+ */
 function xmldb_kalvidassign_upgrade($oldversion) {
     global $CFG, $DB;
 
@@ -28,14 +36,14 @@ function xmldb_kalvidassign_upgrade($oldversion) {
 
     if ($oldversion < 2011091301) {
 
-        // Changing type of field intro on table kalvidassign to text
+        // Changing type of field intro on table kalvidassign to text.
         $table = new xmldb_table('kalvidassign');
         $field = new xmldb_field('intro', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'name');
 
-        // Launch change of type for field intro
+        // Launch change of type for field intro.
         $dbman->change_field_type($table, $field);
 
-        // kalvidassign savepoint reached
+        // Kalvidassign savepoint reached.
         upgrade_mod_savepoint(true, 2011091301, 'kalvidassign');
     }
 

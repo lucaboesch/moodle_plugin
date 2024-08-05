@@ -1,4 +1,6 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -27,21 +29,21 @@ $id = optional_param('id', 0, PARAM_INT);
 
 // Retrieve module instance.
 if (empty($id)) {
-    print_error('invalidid', 'kalvidres');
+    throw new moodle_exception('invalidid', 'kalvidres');
 }
 
 if (!empty($id)) {
 
     if (!$cm = get_coursemodule_from_id('kalvidres', $id)) {
-        print_error('invalidcoursemodule');
+        throw new moodle_exception('invalidcoursemodule');
     }
 
-    if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
-        print_error('coursemisconf');
+    if (!$course = $DB->get_record('course', ['id' => $cm->course])) {
+        throw new moodle_exception('coursemisconf');
     }
 
-    if (!$kalvidres = $DB->get_record('kalvidres', array("id" => $cm->instance))) {
-        print_error('invalidid', 'kalvidres');
+    if (!$kalvidres = $DB->get_record('kalvidres', ["id" => $cm->instance])) {
+        throw new moodle_exception('invalidid', 'kalvidres');
     }
 }
 
@@ -49,7 +51,7 @@ require_course_login($course->id, true, $cm);
 
 global $SESSION, $CFG;
 
-$PAGE->set_url('/mod/kalvidres/view.php', array('id' => $id));
+$PAGE->set_url('/mod/kalvidres/view.php', ['id' => $id]);
 $PAGE->set_title(format_string($kalvidres->name));
 $PAGE->set_heading($course->fullname);
 $pageclass = 'kaltura-kalvidres-body';
@@ -57,10 +59,10 @@ $PAGE->add_body_class($pageclass);
 
 $context = $PAGE->context;
 
-$event = \mod_kalvidres\event\video_resource_viewed::create(array(
+$event = \mod_kalvidres\event\video_resource_viewed::create([
     'objectid' => $kalvidres->id,
-    'context' => context_module::instance($cm->id)
-));
+    'context' => context_module::instance($cm->id),
+]);
 $event->trigger();
 
 $completion = new completion_info($course);
@@ -69,17 +71,26 @@ $completion->set_module_viewed($cm);
 $PAGE->requires->css('/mod/kalvidres/styles.css');
 echo $OUTPUT->header();
 
+$description = format_module_intro('kalvidres', $kalvidres, $cm->id);
+if ($CFG->branch < 400) {
+    if (!empty($description)) {
+        echo $OUTPUT->box_start('generalbox');
+        echo $description;
+        echo $OUTPUT->box_end();
+    }
+}
+
 $renderer = $PAGE->get_renderer('mod_kalvidres');
 
 // Require a YUI module to make the object tag be as large as possible.
-$params = array(
+$params = [
     'bodyclass' => $pageclass,
     'lastheight' => null,
     'padding' => 15,
     'width' => $kalvidres->width,
-    'height' => $kalvidres->height
-);
-$PAGE->requires->yui_module('moodle-local_kaltura-lticontainer', 'M.local_kaltura.init', array($params), null, true);
+    'height' => $kalvidres->height,
+];
+$PAGE->requires->yui_module('moodle-local_kaltura-lticontainer', 'M.local_kaltura.init', [$params], null, true);
 $PAGE->requires->js(new moodle_url('/local/kaltura/js/bse_iframe_resize.js'));
 
 echo $renderer->display_iframe($kalvidres, $course->id);

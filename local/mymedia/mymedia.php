@@ -33,7 +33,7 @@ $context = context_user::instance($USER->id);
 require_capability('local/mymedia:view', $context);
 
 $PAGE->set_context(context_system::instance());
-$header =  fullname($USER) . ": " . get_string('heading_mymedia', 'local_mymedia');
+$header = fullname($USER) . ": " . get_string('heading_mymedia', 'local_mymedia');
 
 $PAGE->set_url('/local/mymedia/mymedia.php');
 $PAGE->set_pagetype('mymedia-index');
@@ -46,23 +46,23 @@ $PAGE->add_body_class($pageclass);
 echo $OUTPUT->header();
 
 // Request the launch content with an iframe tag.
-$attr = array(
+$attr = [
     'id' => 'contentframe',
     'height' => '600px',
     'width' => '100%',
     'allowfullscreen' => 'true',
     'src' => 'lti_launch.php',
     'allow' => 'autoplay *; fullscreen *; encrypted-media *; camera *; microphone *; display-capture *;',
-);
+];
 echo html_writer::tag('iframe', '', $attr);
 
 // Require a YUI module to make the iframe tag be as large as possible.
-$params = array(
+$params = [
     'bodyclass' => $pageclass,
     'lastheight' => null,
-    'padding' => 15
-);
-$PAGE->requires->yui_module('moodle-local_kaltura-lticontainer', 'M.local_kaltura.init', array($params), null, true);
+    'padding' => 15,
+];
+$PAGE->requires->yui_module('moodle-local_kaltura-lticontainer', 'M.local_kaltura.init', [$params], null, true);
 $PAGE->requires->js(new moodle_url('/local/kaltura/js/kea_resize.js'));
 
 echo $OUTPUT->footer();
