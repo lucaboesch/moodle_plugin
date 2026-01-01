@@ -28,6 +28,10 @@ require_once('../../config.php');
 $id = required_param('id', PARAM_INT); // Course ID.
 $course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
 
+if ($CFG->version > 2025041400) {
+    \core_courseformat\activityoverviewbase::redirect_to_overview_page($id, 'kalvidres');
+}
+
 require_course_login($course, true);
 $PAGE->set_pagelayout('incourse');
 
