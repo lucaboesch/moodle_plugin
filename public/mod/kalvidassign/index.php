@@ -21,11 +21,17 @@
  * @copyright  (C) 2014 Remote Learner.net Inc http://www.remote-learner.net
  */
 
+global $CFG;
+
 require_once("../../config.php");
 require_once($CFG->dirroot.'/local/kaltura/locallib.php');
 require_once($CFG->dirroot.'/mod/kalvidassign/locallib.php');
 
 $id = required_param('id', PARAM_INT); // Course ID.
+
+if ($CFG->version > 2025041400) {
+    \core_courseformat\activityoverviewbase::redirect_to_overview_page($id, 'kalvidassign');
+}
 
 $course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
 
