@@ -22,7 +22,20 @@
  */
 $string['modulenameplural'] = 'Kaltura Video Resource';
 $string['modulename'] = 'Kaltura Video Resource';
-$string['modulename_help'] = 'The Kaltura Video Resource enables a teacher to create a resource using a Kaltura video.';
+$string['modulename_help'] = '###### Key features
+- Embeds Kaltura video or audio content on its own page within the course
+- Allows teachers to select from their existing Kaltura "My Media" library
+- Ensures videos load only when accessed, improving course performance
+- Provides a simple workflow for adding Kaltura media to Moodle without manual embedding
+- Displays a clear link with a video icon and resource title for easy navigation
+
+###### Ways to use it
+- Share lecture recordings or tutorials directly within your Moodle course
+- Provide students with access to multimedia resources without slowing down the course page
+- Use Kaltura\'s media tools for interactive or supplementary learning materials
+- Organize video resources as standalone items for better course structure
+- Support blended learning by integrating video content seamlessly into Moodle modules';
+$string['modulename_summary'] = 'Easily add video content to your course as a specialized resource.';
 $string['pluginadministration'] = 'Kaltura Video Resource';
 $string['noresource'] = 'No video resource found in the course';
 $string['pluginname'] = 'Kaltura Video Resource';
