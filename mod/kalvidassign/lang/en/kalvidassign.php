@@ -24,7 +24,20 @@
 $string['activity_not_migrated'] = 'This activity has not yet been migrated to use the new Kaltura instance.';
 $string['modulenameplural'] = 'Kaltura Media Assignments';
 $string['modulename'] = 'Kaltura Media Assignment';
-$string['modulename_help'] = 'The Kaltura Media Assignment enables a teacher to create assignments that require students to upload and submit Kaltura videos. Teachers can grade student submissions and provide feedback.';
+$string['modulename_help'] = '###### Key features
+- Allows teachers to create assignments that require students to submit Kaltura video or audio content
+- Supports direct upload or selection of media from students\' Kaltura library
+- Enables teachers to view, grade, and provide feedback on submitted media
+- Ensures submissions are limited to Kaltura media for streamlined workflow
+- Integrates seamlessly with Moodle\'s grading system
+
+###### Ways to use it
+- Assign video presentations or recorded demonstrations for assessment
+- Collect student-created multimedia projects for grading
+- Encourage creative assignments such as interviews, tutorials, or reflections
+- Provide personalized feedback on video submissions
+- Support remote learning by enabling video-based assignments';
+$string['modulename_summary'] = 'Enables a teacher to create assignments that require students to upload and submit Kaltura videos.';
 $string['name'] = 'Name';
 $string['availabledate'] = 'Available from';
 $string['duedate'] = 'Due Date';
