@@ -134,4 +134,14 @@ class provider implements
         $DB->delete_records('assignsubmission_kalvid', ['assignment' => $deletedata->get_assignid(),
             'submission' => $submissionid]);
     }
+
+    /**
+     * Deletes all submissions for the submission ids / userids provided in a context.
+     *
+     * @param  assign_plugin_request_data $deletedata A class that contains the relevant information required for deletion.
+     */
+    public static function delete_submissions(assign_plugin_request_data $deletedata) {
+        self::delete_submission_for_context($deletedata);
+    }
+
 }
